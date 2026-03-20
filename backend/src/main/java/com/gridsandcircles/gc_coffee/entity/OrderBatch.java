@@ -5,28 +5,25 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Product {
+public class OrderBatch {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private LocalDate batchDate;
 
     @Column(nullable = false)
-    private int price;
+    private LocalDateTime startAt;
 
     @Column(nullable = false)
-    private int stock;
+    private LocalDateTime endAt;
 
-    public Product(String name, int price, int stock) {
-        this.name = name;
-        this.price = price;
-        this.stock = stock;
-    }
 }

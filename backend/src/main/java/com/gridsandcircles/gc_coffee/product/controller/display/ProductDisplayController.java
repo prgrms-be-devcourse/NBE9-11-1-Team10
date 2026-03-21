@@ -6,6 +6,7 @@ import com.gridsandcircles.gc_coffee.product.service.display.ProductDisplayServi
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class ProductDisplayController {
     private final ProductDisplayService productDisplayService;
 
     @GetMapping
-    public ApiResponse<List<ProductDisplayResponse>> getProducts() {
-        return ApiResponse.ok(productDisplayService.findAllProducts());
+    public ApiResponse<List<ProductDisplayResponse>> getProducts(@RequestParam(required = false) String keyword) {
+        return ApiResponse.ok(productDisplayService.findProducts(keyword));
     }
 }

@@ -5,15 +5,13 @@ import com.gridsandcircles.gc_coffee.entity.Product;
 public record ProductDisplayResponse(
         Long id,
         String name,
-        int price,
-        int stock
+        int price
 ) {
     public static ProductDisplayResponse from(Product product) {
         return new ProductDisplayResponse(
                 product.getId(),
                 product.getName(),
-                product.getPrice(),
-                product.getStock()
+                product.getPrice()
         );
     }
 }

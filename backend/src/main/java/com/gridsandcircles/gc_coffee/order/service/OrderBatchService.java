@@ -1,7 +1,6 @@
 package com.gridsandcircles.gc_coffee.order.service;
 
 import com.gridsandcircles.gc_coffee.entity.OrderBatch;
-import com.gridsandcircles.gc_coffee.order.dto.OrderBatchRes;
 import com.gridsandcircles.gc_coffee.order.repository.OrderBatchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,11 +13,7 @@ public class OrderBatchService {
 
     private final OrderBatchRepository orderBatchRepository;
 
-    public List<OrderBatchRes> list(){
-        List<OrderBatch> orderBatchList = orderBatchRepository.findAll();
-
-        return orderBatchList.stream()
-                .map(OrderBatchRes::from)
-                .toList();
+    public List<OrderBatch> list(){
+        return orderBatchRepository.findAll();
     }
 }

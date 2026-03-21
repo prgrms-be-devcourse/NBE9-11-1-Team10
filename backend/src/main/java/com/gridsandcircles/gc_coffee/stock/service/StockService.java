@@ -3,8 +3,8 @@ package com.gridsandcircles.gc_coffee.stock.service;
 import com.gridsandcircles.gc_coffee.entity.Product;
 import com.gridsandcircles.gc_coffee.global.exception.BusinessException;
 import com.gridsandcircles.gc_coffee.global.exception.ErrorCode;
+import com.gridsandcircles.gc_coffee.product.repository.ProductRepository;
 import com.gridsandcircles.gc_coffee.stock.dto.StockResponseDto;
-import com.gridsandcircles.gc_coffee.stock.repository.ProductStockRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class StockService {
 
-    private final ProductStockRepository productStockRepository;
+    private final ProductRepository productRepository;
 
     public void validateStockAvailability(Long productId, int requestQuantity) {
         StockResponseDto stockInfo = getProductStock(productId);
@@ -26,7 +26,7 @@ public class StockService {
     public StockResponseDto getProductStock(Long productId) {
 
         //id로 해당 상품이 있는지 조회, 없으면 상품을 못찾겠다는 오류 메시지 반환
-        Product product = productStockRepository.findById(productId)
+        Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
         return new StockResponseDto(product.getId(),product.getStock());

@@ -1,15 +1,11 @@
 package com.gridsandcircles.gc_coffee.stock.controller;
 
 
-import com.gridsandcircles.gc_coffee.entity.Product;
 import com.gridsandcircles.gc_coffee.global.dto.ApiResponse;
-import com.gridsandcircles.gc_coffee.stock.repository.ProductStockRepository;
 import com.gridsandcircles.gc_coffee.stock.service.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,8 +13,7 @@ public class StockController {
 
     private final StockService stockService;
 
-    private final ProductStockRepository productStockRepository;
-    //api/v1/product/{productId}/stock?requsetQuantity=재고수량
+    //api/v1/product/{productId}/stock?requestQuantity=재고수량
     @GetMapping("api/v1/product/{productId}/stock")
     public ResponseEntity<ApiResponse<Void>> checkStock(
             @PathVariable("productId") Long productId,

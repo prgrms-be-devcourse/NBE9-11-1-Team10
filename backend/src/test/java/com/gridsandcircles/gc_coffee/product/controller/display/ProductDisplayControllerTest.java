@@ -1,11 +1,14 @@
 package com.gridsandcircles.gc_coffee.product.controller.display;
 
+import com.gridsandcircles.gc_coffee.product.dto.display.PageResponse;
 import com.gridsandcircles.gc_coffee.product.dto.display.ProductDisplayResponse;
 import com.gridsandcircles.gc_coffee.product.service.display.ProductDisplayService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -34,22 +37,35 @@ public class ProductDisplayControllerTest {
     @DisplayName("검색어 없이 상품 목록을 조회한다")
     void getProducts_withoutKeyword() throws Exception {
         // given
-        List<ProductDisplayResponse> mockProducts = List.of(
-                new ProductDisplayResponse(1L, "에티오피아 예가체프 G1", 15000),
-                new ProductDisplayResponse(2L, "과테말라 안티구아", 14000)
+        PageResponse<ProductDisplayResponse> mockPageResponse = new PageResponse<>(
+                List.of(
+                        new ProductDisplayResponse(1L, "에티오피아 예가체프 G1", 15000),
+                        new ProductDisplayResponse(2L, "과테말라 안티구아", 14000)
+                ),
+                0,
+                4,
+                1,
+                2,
+                true,
+                true
         );
 
-        given(productDisplayService.findProducts(null)).willReturn(mockProducts);
+        Pageable pageable = PageRequest.of(0, 4);
+
+        given(productDisplayService.findProducts(null, pageable))
+                .willReturn(mockPageResponse);
 
         // when & then
         mockMvc.perform(get("/api/v1/products"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data").isArray())
-                .andExpect(jsonPath("$.data[0].id").value(1))
-                .andExpect(jsonPath("$.data[0].name").value("에티오피아 예가체프 G1"))
-                .andExpect(jsonPath("$.data[1].name").value("과테말라 안티구아"));
+                .andExpect(jsonPath("$.data.content").isArray())
+                .andExpect(jsonPath("$.data.content[0].id").value(1))
+                .andExpect(jsonPath("$.data.content[0].name").value("에티오피아 예가체프 G1"))
+                .andExpect(jsonPath("$.data.content[1].name").value("과테말라 안티구아"))
+                .andExpect(jsonPath("$.data.page").value(0))
+                .andExpect(jsonPath("$.data.size").value(4));
     }
 
     @Test
@@ -57,18 +73,71 @@ public class ProductDisplayControllerTest {
     void getProducts_withKeyword() throws Exception {
         // given
         String keyword = "에티오피아";
-        List<ProductDisplayResponse> mockProducts = List.of(
-                new ProductDisplayResponse(1L, "에티오피아 예가체프 G1", 15000)
+
+        PageResponse<ProductDisplayResponse> mockPageResponse = new PageResponse<>(
+                List.of(
+                        new ProductDisplayResponse(1L, "에티오피아 예가체프 G1", 15000)
+                ),
+                0,
+                4,
+                1,
+                1,
+                true,
+                true
         );
 
-        given(productDisplayService.findProducts(keyword)).willReturn(mockProducts);
+        Pageable pageable = PageRequest.of(0, 4);
+
+        given(productDisplayService.findProducts(keyword, pageable))
+                .willReturn(mockPageResponse);
 
         // when & then
         mockMvc.perform(get("/api/v1/products").param("keyword", keyword))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data[0].id").value(1))
-                .andExpect(jsonPath("$.data[0].name").value("에티오피아 예가체프 G1"))
-                .andExpect(jsonPath("$.data.length()").value(1));
+                .andExpect(jsonPath("$.data.content[0].id").value(1))
+                .andExpect(jsonPath("$.data.content[0].name").value("에티오피아 예가체프 G1"))
+                .andExpect(jsonPath("$.data.content.length()").value(1))
+                .andExpect(jsonPath("$.data.page").value(0))
+                .andExpect(jsonPath("$.data.size").value(4));
+    }
+
+    @Test
+    @DisplayName("페이징 조건으로 상품 목록을 조회한다")
+    void getProducts_withPaging() throws Exception {
+        // given
+        PageResponse<ProductDisplayResponse> mockPageResponse = new PageResponse<>(
+                List.of(
+                        new ProductDisplayResponse(5L, "케냐 AA", 16000),
+                        new ProductDisplayResponse(6L, "콜롬비아 수프리모", 15500)
+                ),
+                1,
+                2,
+                3,
+                6,
+                false,
+                false
+        );
+
+        Pageable pageable = PageRequest.of(1, 2);
+
+        given(productDisplayService.findProducts(null, pageable))
+                .willReturn(mockPageResponse);
+
+        // when & then
+        mockMvc.perform(get("/api/v1/products")
+                        .param("page", "1")
+                        .param("size", "2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.content[0].id").value(5))
+                .andExpect(jsonPath("$.data.content[0].name").value("케냐 AA"))
+                .andExpect(jsonPath("$.data.content[1].name").value("콜롬비아 수프리모"))
+                .andExpect(jsonPath("$.data.page").value(1))
+                .andExpect(jsonPath("$.data.size").value(2))
+                .andExpect(jsonPath("$.data.totalPages").value(3))
+                .andExpect(jsonPath("$.data.totalElements").value(6))
+                .andExpect(jsonPath("$.data.first").value(false))
+                .andExpect(jsonPath("$.data.last").value(false));
     }
 }

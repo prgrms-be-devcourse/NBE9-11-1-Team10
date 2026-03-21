@@ -26,4 +26,10 @@ public class OrderBatch {
     @Column(nullable = false)
     private LocalDateTime endAt;
 
+    public OrderBatch(LocalDate batchDate, LocalDateTime startAt, LocalDateTime endAt) {
+        this.batchDate = batchDate;
+        this.startAt = startAt;
+        this.endAt = endAt;
+    }
+
 }

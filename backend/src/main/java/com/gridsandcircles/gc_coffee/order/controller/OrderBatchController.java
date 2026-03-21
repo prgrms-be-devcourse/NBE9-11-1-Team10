@@ -1,6 +1,7 @@
 package com.gridsandcircles.gc_coffee.order.controller;
 
 import com.gridsandcircles.gc_coffee.entity.OrderBatch;
+import com.gridsandcircles.gc_coffee.order.dto.OrderBatchReq;
 import com.gridsandcircles.gc_coffee.order.dto.OrderBatchRes;
 import com.gridsandcircles.gc_coffee.order.service.OrderBatchService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,12 @@ import java.util.List;
 public class OrderBatchController {
 
     private final OrderBatchService orderBatchService;
+
+    @PostMapping
+    public OrderBatchRes write(@RequestBody OrderBatchReq req){
+        OrderBatch saved = orderBatchService.write(req);
+        return new OrderBatchRes(saved);
+    }
 
     @GetMapping
     public List<OrderBatchRes> list(){

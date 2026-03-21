@@ -9,12 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -139,5 +142,73 @@ public class ProductDisplayControllerTest {
                 .andExpect(jsonPath("$.data.totalElements").value(6))
                 .andExpect(jsonPath("$.data.first").value(false))
                 .andExpect(jsonPath("$.data.last").value(false));
+    }
+
+    @Test
+    @DisplayName("가격 오름차순으로 상품 목록을 조회한다")
+    void getProducts_withPriceAscSort() throws Exception {
+        // given
+        PageResponse<ProductDisplayResponse> mockPageResponse = new PageResponse<>(
+                List.of(
+                        new ProductDisplayResponse(2L, "과테말라 안티구아", 14000),
+                        new ProductDisplayResponse(1L, "에티오피아 예가체프 G1", 15000)
+                ),
+                0,
+                4,
+                1,
+                2,
+                true,
+                true
+        );
+
+        Pageable pageable = PageRequest.of(0, 4, Sort.by("price").ascending());
+
+        given(productDisplayService.findProducts(eq(null), any(Pageable.class)))
+                .willReturn(mockPageResponse);
+
+        // when & then
+        mockMvc.perform(get("/api/v1/products")
+                        .param("sortBy", "price")
+                        .param("direction", "asc"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.content[0].name").value("과테말라 안티구아"))
+                .andExpect(jsonPath("$.data.content[0].price").value(14000))
+                .andExpect(jsonPath("$.data.content[1].name").value("에티오피아 예가체프 G1"))
+                .andExpect(jsonPath("$.data.content[1].price").value(15000));
+    }
+
+    @Test
+    @DisplayName("가격 내림차순으로 상품 목록을 조회한다")
+    void getProducts_withPriceDescSort() throws Exception {
+        // given
+        PageResponse<ProductDisplayResponse> mockPageResponse = new PageResponse<>(
+                List.of(
+                        new ProductDisplayResponse(1L, "에티오피아 예가체프 G1", 15000),
+                        new ProductDisplayResponse(2L, "과테말라 안티구아", 14000)
+                ),
+                0,
+                4,
+                1,
+                2,
+                true,
+                true
+        );
+
+        Pageable pageable = PageRequest.of(0, 4, Sort.by("price").descending());
+
+        given(productDisplayService.findProducts(eq(null), any(Pageable.class)))
+                .willReturn(mockPageResponse);
+
+        // when & then
+        mockMvc.perform(get("/api/v1/products")
+                        .param("sortBy", "price")
+                        .param("direction", "desc"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.content[0].name").value("에티오피아 예가체프 G1"))
+                .andExpect(jsonPath("$.data.content[0].price").value(15000))
+                .andExpect(jsonPath("$.data.content[1].name").value("과테말라 안티구아"))
+                .andExpect(jsonPath("$.data.content[1].price").value(14000));
     }
 }

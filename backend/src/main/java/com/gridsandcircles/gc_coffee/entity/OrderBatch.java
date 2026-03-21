@@ -17,7 +17,7 @@ public class OrderBatch {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private LocalDate batchDate;
 
     @Column(nullable = false)
@@ -25,5 +25,11 @@ public class OrderBatch {
 
     @Column(nullable = false)
     private LocalDateTime endAt;
+
+    public OrderBatch(LocalDate batchDate, LocalDateTime startAt, LocalDateTime endAt) {
+        this.batchDate = batchDate;
+        this.startAt = startAt;
+        this.endAt = endAt;
+    }
 
 }

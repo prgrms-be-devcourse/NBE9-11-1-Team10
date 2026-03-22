@@ -31,7 +31,7 @@ public class ProductDisplayController {
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, sort);
 
         return ApiResponse.ok(productDisplayService.findProducts(keyword, pageable));
     }

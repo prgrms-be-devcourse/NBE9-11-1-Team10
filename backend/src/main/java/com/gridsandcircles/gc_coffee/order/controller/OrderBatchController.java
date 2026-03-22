@@ -32,4 +32,10 @@ public class OrderBatchController {
 
         return orderBatchResList;
     }
+
+    @GetMapping("{orderBatchId}")
+    public OrderBatchRes detail(@PathVariable Long orderBatchId) {
+        OrderBatch orderBatch = orderBatchService.findById(orderBatchId).get();
+        return new OrderBatchRes(orderBatch);
+    }
 }

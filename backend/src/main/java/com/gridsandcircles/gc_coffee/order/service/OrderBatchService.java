@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +17,10 @@ public class OrderBatchService {
 
     public List<OrderBatch> list(){
         return orderBatchRepository.findAll();
+    }
+
+    public Optional<OrderBatch> findById(Long id){
+        return orderBatchRepository.findById(id);
     }
 
     public OrderBatch write(OrderBatchReq req){

@@ -64,4 +64,15 @@ class OrderBatchControllerTest {
                 .extracting(OrderBatch::getId)
                 .contains(orderBatchList.get(0).getId(), orderBatchList.get(1).getId());
     }
+
+    @Test
+    void 주문_배치_단건_조회() {
+        Long targetId = orderBatchList.get(0).getId();
+
+        OrderBatch found = orderBatchService.findById(targetId).orElse(null);
+
+        assertThat(found).isNotNull();
+        assertThat(found.getId()).isEqualTo(targetId);
+        assertThat(found.getBatchDate()).isEqualTo(LocalDate.of(2026, 3, 22));
+    }
 }

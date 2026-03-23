@@ -3,37 +3,34 @@ import React from 'react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     return (
-        <div className="flex h-screen bg-gray-100 font-sans">
+        <div className="flex h-screen bg-[#f8f9fa] font-sans">
             {/* 좌측 사이드바 */}
-            <aside className="w-64 bg-gray-900 text-white flex flex-col shadow-xl">
-                <div className="p-6 border-b border-gray-800">
-                    <h1 className="text-2xl font-bold tracking-wider">GC Admin</h1>
-                    <p className="text-sm text-gray-400 mt-1">Grids & Circles</p>
+            <aside className="w-64 bg-[#222222] text-white flex flex-col shadow-2xl">
+                <div className="p-8 border-b border-white/10">
+                    <h1 className="text-2xl font-black tracking-tight text-[#ba9470]">GC Admin</h1>
+                    <p className="text-[10px] text-gray-500 mt-1 uppercase tracking-[0.2em]">Coffee Management</p>
                 </div>
 
-                <nav className="flex-1 px-4 py-6 space-y-2">
-                    <Link href="/admin/products" className="block px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors text-gray-300 hover:text-white font-medium">
-                        📦 상품 관리
+                <nav className="flex-1 px-4 py-8 space-y-1">
+                    <Link href="/admin/products" className="flex items-center px-4 py-3 rounded-lg hover:bg-white/5 transition-all text-gray-400 hover:text-[#ba9470] group">
+                        <span className="mr-3 text-lg opacity-70 group-hover:opacity-100">📦</span>
+                        <span className="font-medium">상품 관리</span>
                     </Link>
-                    <Link href="/admin/orders" className="block px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors text-gray-300 hover:text-white font-medium">
-                        🛒 주문 관리
+                    <Link href="/admin/orders" className="flex items-center px-4 py-3 rounded-lg hover:bg-white/5 transition-all text-gray-400 hover:text-[#ba9470] group">
+                        <span className="mr-3 text-lg opacity-70 group-hover:opacity-100">🛒</span>
+                        <span className="font-medium">주문 관리</span>
                     </Link>
                 </nav>
             </aside>
 
-            {/* 우측 메인 콘텐츠 영역 */}
+            {/* 우측 영역 */}
             <main className="flex-1 flex flex-col overflow-hidden">
-                {/* 상단 헤더바 */}
-                <header className="bg-white shadow-sm h-16 flex items-center justify-between px-8 border-b border-gray-200">
-                    <h2 className="text-xl font-semibold text-gray-800">관리자 대시보드</h2>
-                    <button className="text-sm px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition font-medium">
-                        로그아웃
-                    </button>
+                <header className="bg-white h-20 flex items-center justify-between px-10 border-b border-gray-200">
+                    <h2 className="text-xl font-bold text-[#222222]">관리자 대시보드</h2>
+                    <button className="text-sm font-bold text-[#ba9470] hover:underline">로그아웃</button>
                 </header>
-
-                {/* 실제 내용이 바뀌는 영역 */}
-                <div className="flex-1 overflow-y-auto p-8">
-                    {children}
+                <div className="flex-1 overflow-y-auto p-10 bg-white">
+                    <div className="max-w-6xl mx-auto">{children}</div>
                 </div>
             </main>
         </div>

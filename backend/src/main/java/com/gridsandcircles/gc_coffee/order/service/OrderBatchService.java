@@ -55,12 +55,10 @@ public class OrderBatchService {
         return orderBatchRepository.save(new OrderBatch(batchDate, startAt, endAt));
     }
 
-    // 주문 시간이 14시 이전이면 전날 배치, 14시 이후면 당일 배치로 결정
+    // 주문 시간이 14시 미만이면 당일 배치, 14시 이상이면 다음날 배치로 결정
     private LocalDate resolveBatchDate(LocalDateTime orderedAt) {
-        if (orderedAt.getHour() < BATCH_START_HOUR) {
-            return orderedAt.toLocalDate().minusDays(1);
-        }
-        return orderedAt.toLocalDate();
+        LocalDate date = orderedAt.toLocalDate();
+        return orderedAt.getHour() >= BATCH_START_HOUR ? date.plusDays(1) : date;
     }
 
     // 해당 날짜 배치가 있으면 반환, 없으면 생성해서 반환

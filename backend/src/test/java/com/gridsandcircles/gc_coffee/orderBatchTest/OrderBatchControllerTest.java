@@ -1,5 +1,6 @@
 package com.gridsandcircles.gc_coffee.orderBatchTest;
 
+import com.gridsandcircles.gc_coffee.entity.Order;
 import com.gridsandcircles.gc_coffee.entity.OrderBatch;
 import com.gridsandcircles.gc_coffee.order.dto.OrderBatchRequest;
 import com.gridsandcircles.gc_coffee.order.repository.OrderBatchRepository;
@@ -8,8 +9,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Constructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -81,22 +84,34 @@ class OrderBatchControllerTest {
     }
 
     @Test
-    void 주문_배치_자동_생성() {
-        LocalDate today = LocalDate.now();
-        orderBatchRepository.findByBatchDate(today).ifPresent(orderBatchRepository::delete);
-
-        OrderBatch created = orderBatchService.findOrCreateCurrentBatch();
-
-        assertThat(created.getBatchDate()).isEqualTo(today);
-        assertThat(created.getStartAt()).isEqualTo(today.atTime(14, 0));
-        assertThat(created.getEndAt()).isEqualTo(today.plusDays(1).atTime(14, 0));
-    }
-
-    @Test
     void 주문_배치_삭제() {
         long targetId = orderBatchList.get(0).getId();
         orderBatchService.deleteById(targetId);
 
         assertThat(orderBatchService.findById(targetId)).isEmpty();
     }
+
+    @Test
+    void 주문_기준_배치_없으면_생성() throws Exception {
+        LocalDateTime orderedAt = LocalDateTime.of(2026, 4, 1, 15, 0);
+        LocalDate expectedBatchDate = LocalDate.of(2026, 4, 2);
+
+        // expectedBatchDate 존재 시, 삭제
+        orderBatchRepository.findByBatchDate(expectedBatchDate)
+                .ifPresent(orderBatchRepository::delete);
+
+        // Order 객체 생성
+        Constructor<Order> constructor = Order.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        Order order = constructor.newInstance();
+        ReflectionTestUtils.setField(order, "orderedAt", orderedAt);
+
+        OrderBatch orderBatch = orderBatchService.findOrCreateByOrder(order);
+
+        // 자동 생성 확인
+        assertThat(orderBatch.getBatchDate()).isEqualTo(expectedBatchDate);
+        assertThat(orderBatch.getStartAt()).isEqualTo(expectedBatchDate.atTime(14, 0));
+        assertThat(orderBatch.getEndAt()).isEqualTo(expectedBatchDate.plusDays(1).atTime(14, 0));
+    }
+
 }

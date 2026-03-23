@@ -1,6 +1,8 @@
 package com.gridsandcircles.gc_coffee.product.service;
 
 import com.gridsandcircles.gc_coffee.entity.Product;
+import com.gridsandcircles.gc_coffee.product.dto.AdminProductUpdateRequest;
+import com.gridsandcircles.gc_coffee.product.dto.AdminProductUpdateResponse;
 import com.gridsandcircles.gc_coffee.product.dto.ProductCreateRequest;
 import com.gridsandcircles.gc_coffee.product.dto.ProductCreateResponse;
 import com.gridsandcircles.gc_coffee.product.repository.ProductRepository;
@@ -19,5 +21,20 @@ public class ProductService {
         Product product = request.toEntity();
         Product savedProduct = productRepository.save(product);
         return ProductCreateResponse.from(savedProduct); // 수정한 응답 DTO 적용
+    }
+
+
+    @Transactional
+    public AdminProductUpdateResponse updateProduct(Long productId, AdminProductUpdateRequest request) {
+        Product product = productRepository.findById(productId)
+                                           .orElseThrow(() -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다. ID: " + productId));
+
+        product.update(
+                request.getName(),
+                request.getPrice(),
+                request.getStock()
+        );
+
+        return AdminProductUpdateResponse.from(product);
     }
 }

@@ -24,4 +24,8 @@ public class OrderItem {
 
     @Column(nullable = false)
     private int quantity;
+
+    public void assignOrder(Order order) {
+        this.order = order;
+    }
 }

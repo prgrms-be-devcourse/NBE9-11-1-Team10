@@ -55,18 +55,18 @@ public class OrderService {
 
         // 4. 최종 주문 생성
         Order order = Order.builder()
-                // .member(tempMember)
                 .orderBatch(orderBatch)
                 .address(req.address())
                 .zipCode(req.zipCode())
                 .orderedAt(LocalDateTime.now())
                 .totalPrice(totalPrice)
                 .totalQuantity(totalQuantity)
-                .orderItems(orderItems) // CascadeType.ALL을 위해 추가
+                .orderItems(orderItems)
                 .build();
 
         // 5. 양방향 관계 설정 (OrderItem에 Order 주입)
         for (OrderItem item : orderItems) {
+            item.assignOrder(order);
         }
 
         return orderRepository.save(order).getId();

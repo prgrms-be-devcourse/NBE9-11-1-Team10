@@ -4,7 +4,7 @@ import React from 'react';
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     return (
         <div className="flex h-screen bg-gray-100 font-sans">
-            {/* ⬅️ 좌측 사이드바 */}
+            {/* 좌측 사이드바 */}
             <aside className="w-64 bg-gray-900 text-white flex flex-col shadow-xl">
                 <div className="p-6 border-b border-gray-800">
                     <h1 className="text-2xl font-bold tracking-wider">GC Admin</h1>
@@ -21,7 +21,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </nav>
             </aside>
 
-            {/* ➡️ 우측 메인 콘텐츠 영역 */}
+            {/* 우측 메인 콘텐츠 영역 */}
             <main className="flex-1 flex flex-col overflow-hidden">
                 {/* 상단 헤더바 */}
                 <header className="bg-white shadow-sm h-16 flex items-center justify-between px-8 border-b border-gray-200">
@@ -31,7 +31,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     </button>
                 </header>
 
-                {/* 실제 내용이 바뀌는 알맹이 영역 */}
+                {/* 실제 내용이 바뀌는 영역 */}
                 <div className="flex-1 overflow-y-auto p-8">
                     {children}
                 </div>

@@ -32,6 +32,14 @@ public class OrderBatchService {
         return orderBatchRepository.save(orderBatch);
     }
 
+    public Optional<OrderBatch> findCurrentBatch() {
+        return orderBatchRepository.findByBatchDate(LocalDate.now());
+    }
+
+    public void deleteById(long id) {
+        orderBatchRepository.deleteById(id);
+    }
+
     public OrderBatch findOrCreateCurrentBatch() {
         LocalDate batchDate = LocalDate.now();
 
@@ -43,13 +51,10 @@ public class OrderBatchService {
                 });
     }
 
-    public Optional<OrderBatch> findCurrentBatch() {
-        return orderBatchRepository.findByBatchDate(LocalDate.now());
+    // 실제 배치 엔티티를 생성하여 DB에 저장
+    private OrderBatch createBatch(LocalDate batchDate) {
+        LocalDateTime startAt = batchDate.atTime(BATCH_START_HOUR, 0);
+        LocalDateTime endAt = batchDate.plusDays(1).atTime(BATCH_START_HOUR, 0);
+        return orderBatchRepository.save(new OrderBatch(batchDate, startAt, endAt));
     }
-
-    public void deleteById(long id) {
-        orderBatchRepository.deleteById(id);
-    }
-
-
 }

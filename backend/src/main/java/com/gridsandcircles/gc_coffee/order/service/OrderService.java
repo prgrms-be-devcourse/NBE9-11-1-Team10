@@ -102,4 +102,8 @@ public class OrderService {
                 itemDetails
         );
     }
+
+    public List<Order> list(){
+        return orderRepository.findAll();
+    }
 }

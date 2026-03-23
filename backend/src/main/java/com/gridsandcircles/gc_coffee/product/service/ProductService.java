@@ -1,6 +1,8 @@
 package com.gridsandcircles.gc_coffee.product.service;
 
 import com.gridsandcircles.gc_coffee.entity.Product;
+import com.gridsandcircles.gc_coffee.global.exception.BusinessException;
+import com.gridsandcircles.gc_coffee.global.exception.ErrorCode;
 import com.gridsandcircles.gc_coffee.product.dto.AdminProductUpdateRequest;
 import com.gridsandcircles.gc_coffee.product.dto.AdminProductUpdateResponse;
 import com.gridsandcircles.gc_coffee.product.dto.ProductCreateRequest;
@@ -36,5 +38,13 @@ public class ProductService {
         );
 
         return AdminProductUpdateResponse.from(product);
+    }
+
+    @Transactional
+    public void deleteProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                                           .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        productRepository.delete(product);
     }
 }

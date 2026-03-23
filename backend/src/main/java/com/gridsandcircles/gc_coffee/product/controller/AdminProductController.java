@@ -31,4 +31,12 @@ public class AdminProductController {
         AdminProductUpdateResponse response = productService.updateProduct(productId, request);
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
+        productService.deleteProduct(productId);
+
+        // 삭제 성공 시 응답 바디 없이 204 No Content 반환
+        return ResponseEntity.noContent().build();
+    }
 }

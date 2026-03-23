@@ -57,4 +57,12 @@ public class OrderBatchService {
         LocalDateTime endAt = batchDate.plusDays(1).atTime(BATCH_START_HOUR, 0);
         return orderBatchRepository.save(new OrderBatch(batchDate, startAt, endAt));
     }
+
+    // 주문 시간이 14시 이전이면 전날 배치, 14시 이후면 당일 배치로 결정
+    private LocalDate resolveBatchDate(LocalDateTime orderedAt) {
+        if (orderedAt.getHour() < BATCH_START_HOUR) {
+            return orderedAt.toLocalDate().minusDays(1);
+        }
+        return orderedAt.toLocalDate();
+    }
 }

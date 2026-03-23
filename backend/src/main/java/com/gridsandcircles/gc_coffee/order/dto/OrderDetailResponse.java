@@ -1,5 +1,7 @@
 package com.gridsandcircles.gc_coffee.order.dto;
 
+import com.gridsandcircles.gc_coffee.entity.Order;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,11 +15,23 @@ public record OrderDetailResponse(
         LocalDateTime orderedAt,
         List<OrderItemDetail> orderItems
 ) {
-    // 주문에 포함된 개별 상품 정보를 담는 내부 record
     public record OrderItemDetail(
             Long productId,
-            String productName, // Product 엔티티에서 가져올 이름
+            String productName,
             int quantity,
             long unitPrice
     ) {}
+
+    public OrderDetailResponse(Order order) {
+        this(
+                order.getId(),
+                order.getMember() != null ? order.getMember().getEmail() : null,
+                order.getAddress(),
+                order.getZipCode(),
+                order.getTotalPrice(),
+                order.getTotalQuantity(),
+                order.getOrderedAt(),
+                List.of()
+        );
+    }
 }

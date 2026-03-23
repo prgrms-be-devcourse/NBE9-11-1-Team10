@@ -7,18 +7,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -53,9 +51,7 @@ public class ProductDisplayControllerTest {
                 true
         );
 
-        Pageable pageable = PageRequest.of(0, 4);
-
-        given(productDisplayService.findProducts(null, pageable))
+        given(productDisplayService.findProducts(eq(null), any(Pageable.class)))
                 .willReturn(mockPageResponse);
 
         // when & then
@@ -89,9 +85,7 @@ public class ProductDisplayControllerTest {
                 true
         );
 
-        Pageable pageable = PageRequest.of(0, 4);
-
-        given(productDisplayService.findProducts(keyword, pageable))
+        given(productDisplayService.findProducts(eq(keyword), any(Pageable.class)))
                 .willReturn(mockPageResponse);
 
         // when & then
@@ -122,9 +116,7 @@ public class ProductDisplayControllerTest {
                 false
         );
 
-        Pageable pageable = PageRequest.of(1, 2);
-
-        given(productDisplayService.findProducts(null, pageable))
+        given(productDisplayService.findProducts(eq(null), any(Pageable.class)))
                 .willReturn(mockPageResponse);
 
         // when & then
@@ -161,8 +153,6 @@ public class ProductDisplayControllerTest {
                 true
         );
 
-        Pageable pageable = PageRequest.of(0, 4, Sort.by("price").ascending());
-
         given(productDisplayService.findProducts(eq(null), any(Pageable.class)))
                 .willReturn(mockPageResponse);
 
@@ -176,6 +166,11 @@ public class ProductDisplayControllerTest {
                 .andExpect(jsonPath("$.data.content[0].price").value(14000))
                 .andExpect(jsonPath("$.data.content[1].name").value("에티오피아 예가체프 G1"))
                 .andExpect(jsonPath("$.data.content[1].price").value(15000));
+
+        verify(productDisplayService).findProducts(eq(null), argThat(p ->
+                p.getSort().getOrderFor("price") != null &&
+                        p.getSort().getOrderFor("price").isAscending()
+        ));
     }
 
     @Test
@@ -195,8 +190,6 @@ public class ProductDisplayControllerTest {
                 true
         );
 
-        Pageable pageable = PageRequest.of(0, 4, Sort.by("price").descending());
-
         given(productDisplayService.findProducts(eq(null), any(Pageable.class)))
                 .willReturn(mockPageResponse);
 
@@ -210,5 +203,10 @@ public class ProductDisplayControllerTest {
                 .andExpect(jsonPath("$.data.content[0].price").value(15000))
                 .andExpect(jsonPath("$.data.content[1].name").value("과테말라 안티구아"))
                 .andExpect(jsonPath("$.data.content[1].price").value(14000));
+
+        verify(productDisplayService).findProducts(eq(null), argThat(p ->
+                p.getSort().getOrderFor("price") != null &&
+                        p.getSort().getOrderFor("price").isDescending()
+        ));
     }
 }

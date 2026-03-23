@@ -43,4 +43,8 @@ public class OrderBatchService {
                 });
     }
 
+    public Optional<OrderBatch> findCurrentBatch() {
+        return orderBatchRepository.findByBatchDate(LocalDate.now());
+    }
+
 }

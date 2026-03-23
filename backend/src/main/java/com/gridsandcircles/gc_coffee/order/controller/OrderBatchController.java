@@ -5,6 +5,7 @@ import com.gridsandcircles.gc_coffee.order.dto.OrderBatchRequest;
 import com.gridsandcircles.gc_coffee.order.dto.OrderBatchResponse;
 import com.gridsandcircles.gc_coffee.order.service.OrderBatchService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,5 +38,12 @@ public class OrderBatchController {
     public OrderBatchResponse detail(@PathVariable Long orderBatchId) {
         OrderBatch orderBatch = orderBatchService.findById(orderBatchId).get();
         return new OrderBatchResponse(orderBatch);
+    }
+
+    @GetMapping("/current")
+    public ResponseEntity<OrderBatchResponse> current() {
+        return orderBatchService.findCurrentBatch()
+                .map(orderBatch -> ResponseEntity.ok(new OrderBatchResponse(orderBatch)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

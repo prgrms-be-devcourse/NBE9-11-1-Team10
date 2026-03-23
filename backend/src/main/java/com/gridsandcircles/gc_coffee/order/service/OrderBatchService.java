@@ -47,4 +47,9 @@ public class OrderBatchService {
         return orderBatchRepository.findByBatchDate(LocalDate.now());
     }
 
+    public void deleteById(long id) {
+        orderBatchRepository.deleteById(id);
+    }
+
+
 }

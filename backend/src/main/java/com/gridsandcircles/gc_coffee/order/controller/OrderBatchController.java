@@ -46,4 +46,10 @@ public class OrderBatchController {
                 .map(orderBatch -> ResponseEntity.ok(new OrderBatchResponse(orderBatch)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @DeleteMapping("{orderBatchId}")
+    public ResponseEntity<Void> delete(@PathVariable long orderBatchId) {
+        orderBatchService.deleteById(orderBatchId);
+        return ResponseEntity.noContent().build(); // 삭제 후 204응답
+    }
 }

@@ -1,5 +1,6 @@
 package com.gridsandcircles.gc_coffee.order.service;
 
+import com.gridsandcircles.gc_coffee.entity.Order;
 import com.gridsandcircles.gc_coffee.entity.OrderBatch;
 import com.gridsandcircles.gc_coffee.order.dto.OrderBatchRequest;
 import com.gridsandcircles.gc_coffee.order.repository.OrderBatchRepository;
@@ -32,17 +33,6 @@ public class OrderBatchService {
         return orderBatchRepository.save(orderBatch);
     }
 
-    public OrderBatch findOrCreateCurrentBatch() {
-        LocalDate batchDate = LocalDate.now();
-
-        return orderBatchRepository.findByBatchDate(batchDate)
-                .orElseGet(() -> {
-                    LocalDateTime startAt = batchDate.atTime(BATCH_START_HOUR, 0);
-                    LocalDateTime endAt = batchDate.plusDays(1).atTime(BATCH_START_HOUR, 0);
-                    return orderBatchRepository.save(new OrderBatch(batchDate, startAt, endAt));
-                });
-    }
-
     public Optional<OrderBatch> findCurrentBatch() {
         return orderBatchRepository.findByBatchDate(LocalDate.now());
     }
@@ -51,5 +41,29 @@ public class OrderBatchService {
         orderBatchRepository.deleteById(id);
     }
 
+    // 주문의 orderedAt로 배치 날짜를 계산하고, 배치를 가져오거나 새로 만든다
+    public OrderBatch findOrCreateByOrder(Order order) {
+        LocalDateTime orderedAt = order.getOrderedAt();
+        LocalDate batchDate = resolveBatchDate(orderedAt);
+        return findOrCreateByBatchDate(batchDate);
+    }
 
+    // 실제 배치 엔티티를 생성하여 DB에 저장
+    private OrderBatch createBatch(LocalDate batchDate) {
+        LocalDateTime startAt = batchDate.atTime(BATCH_START_HOUR, 0);
+        LocalDateTime endAt = batchDate.plusDays(1).atTime(BATCH_START_HOUR, 0);
+        return orderBatchRepository.save(new OrderBatch(batchDate, startAt, endAt));
+    }
+
+    // 주문 시간이 14시 미만이면 당일 배치, 14시 이상이면 다음날 배치로 결정
+    private LocalDate resolveBatchDate(LocalDateTime orderedAt) {
+        LocalDate date = orderedAt.toLocalDate();
+        return orderedAt.getHour() >= BATCH_START_HOUR ? date.plusDays(1) : date;
+    }
+
+    // 해당 날짜 배치가 있으면 반환, 없으면 생성해서 반환
+    private OrderBatch findOrCreateByBatchDate(LocalDate batchDate) {
+        return orderBatchRepository.findByBatchDate(batchDate)
+                .orElseGet(() -> createBatch(batchDate));
+    }
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -29,7 +30,7 @@ public class OrderService {
     @Transactional
     public Long createOrder(OrderCreateRequest req) {
         // 1. 주문 시점 확정
-        LocalDateTime orderedAt = LocalDateTime.now();
+        LocalDateTime orderedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
 
         // 2. 배송 배치 자동 결정
         // 임시 Order 객체를 만들어 BatchService에 넘겨 배치를 결정

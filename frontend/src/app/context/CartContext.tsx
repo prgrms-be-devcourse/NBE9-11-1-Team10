@@ -33,7 +33,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     //페이지 로드 시 딱 한 번 실행 , 백엔드 상품 목록 조회 api 호출
     useEffect(() => {
-        fetch("http://localhost:8080/api/v1/products")
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/products`)
             .then(res => {
                 if (!res.ok) throw new Error("상품 목록 로드 실패");
                 return res.json();
@@ -43,7 +43,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 // response.data: PageResponse 객체
                 // response.data.content: 진짜 상품 배열
                 
-                const actualProducts = response.data?.content || []; 
+                const actualProducts = response.data?.content || [];
                 setProducts(actualProducts);
             })
             .catch(e => {
@@ -80,7 +80,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         //장바구니의 +,- 버튼중 + 버튼을 클릭할때, 재고가 부족하면 장바구니에 상품을 추가하지 않음
         try {
             //백엔드 재고 조회 api 호출
-            const response = await fetch(`http://localhost:8080/api/v1/product/${productId}/stock?requestQuantity=${targetQty}`);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/products/${productId}/stock?requestQuantity=${targetQty}`);
             
             //백엔드 재고 조회 api 호출 결과가 실패하면 재고가 부족하다는 메시지를 보여줌
             if (!response.ok) {

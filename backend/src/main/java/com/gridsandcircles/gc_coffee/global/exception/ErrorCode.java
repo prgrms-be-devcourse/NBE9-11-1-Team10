@@ -18,6 +18,7 @@ public enum ErrorCode {
 
     // 주문
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER_NOT_FOUND", "주문을 찾을 수 없습니다"),
+    ORDER_BATCH_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER_BATCH_NOT_FOUND", "배송 회차를 찾을 수 없습니다"),
 
     // 고객
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_NOT_FOUND", "고객을 찾을 수 없습니다");

@@ -1,6 +1,6 @@
 package com.gridsandcircles.gc_coffee.order.controller;
 
-import com.gridsandcircles.gc_coffee.order.dto.OrderCreateReq;
+import com.gridsandcircles.gc_coffee.order.dto.OrderCreateRequest;
 import com.gridsandcircles.gc_coffee.order.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<Long> createOrder(@RequestBody @Valid OrderCreateReq req) {
+    public ResponseEntity<Long> createOrder(@RequestBody @Valid OrderCreateRequest req) {
         Long orderId = orderService.createOrder(req);
         return ResponseEntity.ok(orderId);
     }

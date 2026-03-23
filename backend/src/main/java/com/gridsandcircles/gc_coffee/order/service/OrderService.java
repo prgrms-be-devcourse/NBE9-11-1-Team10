@@ -1,7 +1,7 @@
 package com.gridsandcircles.gc_coffee.order.service;
 
 import com.gridsandcircles.gc_coffee.entity.*;
-import com.gridsandcircles.gc_coffee.order.dto.OrderCreateReq;
+import com.gridsandcircles.gc_coffee.order.dto.OrderCreateRequest;
 import com.gridsandcircles.gc_coffee.order.repository.OrderRepository;
 import com.gridsandcircles.gc_coffee.order.repository.OrderBatchRepository;
 import com.gridsandcircles.gc_coffee.product.repository.ProductRepository;
@@ -27,7 +27,7 @@ public class OrderService {
     private final OrderBatchRepository orderBatchRepository;
 
     @Transactional
-    public Long createOrder(OrderCreateReq req) {
+    public Long createOrder(OrderCreateRequest req) {
         // 1. 배송 회차 조회
         OrderBatch orderBatch = orderBatchRepository.findById(1L)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_BATCH_NOT_FOUND));
@@ -38,7 +38,7 @@ public class OrderService {
         List<OrderItem> orderItems = new ArrayList<>();
 
         // 3. 주문 상세 항목 생성
-        for (OrderCreateReq.OrderItemReq itemReq : req.orderItems()) {
+        for (OrderCreateRequest.OrderItemReq itemReq : req.orderItems()) {
             Product product = productRepository.findById(itemReq.productId())
                     .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 

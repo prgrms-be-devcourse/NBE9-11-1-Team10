@@ -1,6 +1,9 @@
 package com.gridsandcircles.gc_coffee.order.controller;
 
 import com.gridsandcircles.gc_coffee.entity.OrderBatch;
+import com.gridsandcircles.gc_coffee.global.dto.ApiResponse;
+import com.gridsandcircles.gc_coffee.global.exception.BusinessException;
+import com.gridsandcircles.gc_coffee.global.exception.ErrorCode;
 import com.gridsandcircles.gc_coffee.order.dto.OrderBatchRequest;
 import com.gridsandcircles.gc_coffee.order.dto.OrderBatchResponse;
 import com.gridsandcircles.gc_coffee.order.service.OrderBatchService;
@@ -17,34 +20,35 @@ public class OrderBatchController {
 
     private final OrderBatchService orderBatchService;
 
-    @PostMapping("/write")
-    public OrderBatchResponse write(@RequestBody OrderBatchRequest req){
+    @PostMapping
+    public ApiResponse<OrderBatchResponse> write(@RequestBody OrderBatchRequest req){
         OrderBatch saved = orderBatchService.write(req);
-        return new OrderBatchResponse(saved);
+        return ApiResponse.ok(new OrderBatchResponse(saved));
     }
 
     @GetMapping
-    public List<OrderBatchResponse> list(){
+    public ApiResponse<List<OrderBatchResponse>> list(){
         List<OrderBatch> orderBatchList = orderBatchService.list();
 
         List<OrderBatchResponse> orderBatchResponseList = orderBatchList.reversed().stream()
                 .map(OrderBatchResponse::new)
                 .toList();
 
-        return orderBatchResponseList;
+        return ApiResponse.ok(orderBatchResponseList);
     }
 
     @GetMapping("{orderBatchId}")
     public OrderBatchResponse detail(@PathVariable Long orderBatchId) {
-        OrderBatch orderBatch = orderBatchService.findById(orderBatchId).get();
+        OrderBatch orderBatch = orderBatchService.findById(orderBatchId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_BATCH_NOT_FOUND));
         return new OrderBatchResponse(orderBatch);
     }
 
     @GetMapping("/current")
-    public ResponseEntity<OrderBatchResponse> current() {
-        return orderBatchService.findCurrentBatch()
-                .map(orderBatch -> ResponseEntity.ok(new OrderBatchResponse(orderBatch)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ApiResponse<OrderBatchResponse> current() {
+        OrderBatch batch = orderBatchService.findCurrentBatch()
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_BATCH_NOT_FOUND));
+        return ApiResponse.ok(new OrderBatchResponse(batch));
     }
 
     @DeleteMapping("{orderBatchId}")

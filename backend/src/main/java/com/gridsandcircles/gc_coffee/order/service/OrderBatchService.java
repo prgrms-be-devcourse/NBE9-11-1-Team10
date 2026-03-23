@@ -65,4 +65,10 @@ public class OrderBatchService {
         }
         return orderedAt.toLocalDate();
     }
+
+    // 해당 날짜 배치가 있으면 반환, 없으면 생성해서 반환
+    private OrderBatch findOrCreateByBatchDate(LocalDate batchDate) {
+        return orderBatchRepository.findByBatchDate(batchDate)
+                .orElseGet(() -> createBatch(batchDate));
+    }
 }

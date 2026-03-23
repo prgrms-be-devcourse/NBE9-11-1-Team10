@@ -4,13 +4,13 @@ import com.gridsandcircles.gc_coffee.entity.OrderBatch;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public record OrderBatchRes (
+public record OrderBatchResponse(
         Long id,
         LocalDate batchDate,
         LocalDateTime startAt,
         LocalDateTime endAt
 ) {
-    public OrderBatchRes(OrderBatch orderBatch) {
+    public OrderBatchResponse(OrderBatch orderBatch) {
         this(
                 orderBatch.getId(),
                 orderBatch.getBatchDate(),

@@ -91,4 +91,12 @@ class OrderBatchControllerTest {
         assertThat(created.getStartAt()).isEqualTo(today.atTime(14, 0));
         assertThat(created.getEndAt()).isEqualTo(today.plusDays(1).atTime(14, 0));
     }
+
+    @Test
+    void 주문_배치_삭제() {
+        long targetId = orderBatchList.get(0).getId();
+        orderBatchService.deleteById(targetId);
+
+        assertThat(orderBatchService.findById(targetId)).isEmpty();
+    }
 }

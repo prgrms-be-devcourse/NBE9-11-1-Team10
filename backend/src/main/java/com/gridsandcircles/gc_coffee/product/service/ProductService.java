@@ -37,4 +37,12 @@ public class ProductService {
 
         return AdminProductUpdateResponse.from(product);
     }
+
+    @Transactional
+    public void deleteProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                                           .orElseThrow(() -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다. ID: " + productId));
+
+        productRepository.delete(product);
+    }
 }

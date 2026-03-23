@@ -17,7 +17,7 @@ public class OrderBatchController {
 
     private final OrderBatchService orderBatchService;
 
-    @PostMapping("/write")
+    @PostMapping
     public OrderBatchResponse write(@RequestBody OrderBatchRequest req){
         OrderBatch saved = orderBatchService.write(req);
         return new OrderBatchResponse(saved);

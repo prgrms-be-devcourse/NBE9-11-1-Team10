@@ -38,22 +38,31 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 if (!res.ok) throw new Error("상품 목록 로드 실패");
                 return res.json();
             })
-            .then(data => setProducts(data)) // 성공 시 데이터 주입
+            .then(response => {
+                // response: ApiResponse 객체
+                // response.data: PageResponse 객체
+                // response.data.content: 진짜 상품 배열
+                
+                const actualProducts = response.data?.content || []; 
+                setProducts(actualProducts);
+            })
             .catch(e => {
-                console.error(e);
-                setProducts([]); // 에러 시 빈 배열로 안전하게 초기화
+                console.error("데이터 로드 에러:", e);
+                setProducts([]); // 에러 시 빈 배열로 초기화하여 reduce 에러 방지
             });
     }, []);
 
- 
+        // 총 합을 구하는 부분
       const totalAmount = useMemo(() => {
         return products.reduce((acc, p) => acc + (p.price * (cart[p.id] || 0)), 0);
-      }, [cart, products]); // 이부분 다시 잘 살펴보기
+      }, [cart, products]); 
 
+      //카트 내부 리셋
       const resetCart = () => {
         setCart({});
       };
 
+      //상품 수량 변경
       const updateQuantity = async (productId: number, quantity_delta: number) => {
         
         //현재 cart에 들어있는 상품의 수량을 가져옴

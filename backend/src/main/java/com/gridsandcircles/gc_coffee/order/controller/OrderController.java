@@ -1,5 +1,6 @@
 package com.gridsandcircles.gc_coffee.order.controller;
 
+import com.gridsandcircles.gc_coffee.global.dto.ApiResponse;
 import com.gridsandcircles.gc_coffee.order.dto.OrderCreateRequest;
 import com.gridsandcircles.gc_coffee.order.service.OrderService;
 import jakarta.validation.Valid;
@@ -15,8 +16,9 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<Long> createOrder(@RequestBody @Valid OrderCreateRequest req) {
+    public ApiResponse<Long> createOrder(@RequestBody @Valid OrderCreateRequest req) {
         Long orderId = orderService.createOrder(req);
-        return ResponseEntity.ok(orderId);
+
+        return ApiResponse.ok(orderId);
     }
 }

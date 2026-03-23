@@ -15,7 +15,7 @@ export default function AdminProductsPage() {
           <h2 className="text-3xl font-black text-gray-900">상품 관리</h2>
           <p className="text-gray-500 mt-1">판매 중인 원두 상품을 등록하고 수정할 수 있습니다.</p>
         </div>
-        <button className="bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all font-bold">
+        <button className="bg-[#ba9470] text-white px-6 py-3 rounded-lg hover:bg-[#a67c52] shadow-md transition-all font-bold">
           + 새 상품 등록
         </button>
       </div>
@@ -39,18 +39,18 @@ export default function AdminProductsPage() {
                 <td className="px-8 py-5 whitespace-nowrap text-sm text-gray-600">{product.price.toLocaleString()}원</td>
                 <td className="px-8 py-5 whitespace-nowrap">
                   {product.stock > 0 ? (
-                    <span className="px-3 py-1 text-xs font-bold bg-green-100 text-green-700 rounded-full">
+                    <span className="px-3 py-1 text-xs font-bold bg-[#ba9470]/10 text-[#ba9470] rounded-md">
                       재고 있음 ({product.stock})
                     </span>
                   ) : (
-                    <span className="px-3 py-1 text-xs font-bold bg-red-100 text-red-700 rounded-full">
+                    <span className="px-3 py-1 text-xs font-bold bg-gray-100 text-gray-400 rounded-md">
                       품절
                     </span>
                   )}
                 </td>
-                <td className="px-8 py-5 whitespace-nowrap text-sm font-bold space-x-4">
-                  <button className="text-indigo-600 hover:text-indigo-900 transition-colors">수정</button>
-                  <button className="text-rose-600 hover:text-rose-900 transition-colors">삭제</button>
+                <td className="px-8 py-5 whitespace-nowrap text-sm font-bold space-x-4 text-center">
+                  <button className="text-[#ba9470] hover:text-[#a67c52] transition-colors">수정</button>
+                  <button className="text-gray-400 hover:text-red-500 transition-colors">삭제</button>
                 </td>
               </tr>
             ))}

@@ -2,9 +2,13 @@ package com.gridsandcircles.gc_coffee.product.controller;
 
 import com.gridsandcircles.gc_coffee.global.dto.ApiResponse;
 import com.gridsandcircles.gc_coffee.product.dto.ProductCreateRequest;
+import com.gridsandcircles.gc_coffee.product.dto.ProductCreateResponse;
 import com.gridsandcircles.gc_coffee.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -14,9 +18,8 @@ public class AdminProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ApiResponse<Long> createProduct(@RequestBody ProductCreateRequest request) {
-        Long productId = productService.createProduct(request);
-
-        return ApiResponse.ok(productId);
+    public ApiResponse<ProductCreateResponse> createProduct(@RequestBody ProductCreateRequest request) {
+        ProductCreateResponse response = productService.createProduct(request);
+        return ApiResponse.ok(response);
     }
 }

@@ -1,7 +1,7 @@
 package com.gridsandcircles.gc_coffee.orderBatchTest;
 
 import com.gridsandcircles.gc_coffee.entity.OrderBatch;
-import com.gridsandcircles.gc_coffee.order.dto.OrderBatchReq;
+import com.gridsandcircles.gc_coffee.order.dto.OrderBatchRequest;
 import com.gridsandcircles.gc_coffee.order.service.OrderBatchService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,13 +26,13 @@ class OrderBatchControllerTest {
 
     @BeforeEach
     void setUp() {
-        OrderBatch batch1 = orderBatchService.write(new OrderBatchReq(
+        OrderBatch batch1 = orderBatchService.write(new OrderBatchRequest(
                 LocalDate.of(2026, 3, 22),
                 LocalDateTime.of(2026, 3, 22, 14, 0),
                 LocalDateTime.of(2026, 3, 23, 14, 0)
         ));
 
-        OrderBatch batch2 = orderBatchService.write(new OrderBatchReq(
+        OrderBatch batch2 = orderBatchService.write(new OrderBatchRequest(
                 LocalDate.of(2026, 3, 23),
                 LocalDateTime.of(2026, 3, 23, 14, 0),
                 LocalDateTime.of(2026, 3, 24, 14, 0)
@@ -43,7 +43,7 @@ class OrderBatchControllerTest {
 
     @Test
     void 주문_배치_작성() {
-        OrderBatch created = orderBatchService.write(new OrderBatchReq(
+        OrderBatch created = orderBatchService.write(new OrderBatchRequest(
                 LocalDate.of(2026, 3, 24),
                 LocalDateTime.of(2026, 3, 24, 14, 0),
                 LocalDateTime.of(2026, 3, 25, 14, 0)

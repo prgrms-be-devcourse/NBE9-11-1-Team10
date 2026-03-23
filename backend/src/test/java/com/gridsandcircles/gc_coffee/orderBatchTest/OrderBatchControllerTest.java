@@ -2,6 +2,7 @@ package com.gridsandcircles.gc_coffee.orderBatchTest;
 
 import com.gridsandcircles.gc_coffee.entity.OrderBatch;
 import com.gridsandcircles.gc_coffee.order.dto.OrderBatchRequest;
+import com.gridsandcircles.gc_coffee.order.repository.OrderBatchRepository;
 import com.gridsandcircles.gc_coffee.order.service.OrderBatchService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,9 @@ class OrderBatchControllerTest {
 
     @Autowired
     private OrderBatchService orderBatchService;
+
+    @Autowired
+    private OrderBatchRepository orderBatchRepository;
 
     private List<OrderBatch> orderBatchList;
 
@@ -74,5 +78,17 @@ class OrderBatchControllerTest {
         assertThat(found).isNotNull();
         assertThat(found.getId()).isEqualTo(targetId);
         assertThat(found.getBatchDate()).isEqualTo(LocalDate.of(2026, 3, 22));
+    }
+
+    @Test
+    void 주문_배치_자동_생성() {
+        LocalDate today = LocalDate.now();
+        orderBatchRepository.findByBatchDate(today).ifPresent(orderBatchRepository::delete);
+
+        OrderBatch created = orderBatchService.findOrCreateCurrentBatch();
+
+        assertThat(created.getBatchDate()).isEqualTo(today);
+        assertThat(created.getStartAt()).isEqualTo(today.atTime(14, 0));
+        assertThat(created.getEndAt()).isEqualTo(today.plusDays(1).atTime(14, 0));
     }
 }

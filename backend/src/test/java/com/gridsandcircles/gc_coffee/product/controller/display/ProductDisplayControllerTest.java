@@ -1,7 +1,7 @@
 package com.gridsandcircles.gc_coffee.product.controller.display;
 
-import com.gridsandcircles.gc_coffee.product.dto.display.PageResponse;
-import com.gridsandcircles.gc_coffee.product.dto.display.ProductDisplayResponse;
+import com.gridsandcircles.gc_coffee.product.dto.PageResponse;
+import com.gridsandcircles.gc_coffee.product.dto.ProductResponse;
 import com.gridsandcircles.gc_coffee.product.service.display.ProductDisplayService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,10 +40,10 @@ public class ProductDisplayControllerTest {
     @DisplayName("검색어 없이 상품 목록을 조회한다")
     void getProducts_withoutKeyword() throws Exception {
         // given
-        PageResponse<ProductDisplayResponse> mockPageResponse = new PageResponse<>(
+        PageResponse<ProductResponse> mockPageResponse = new PageResponse<>(
                 List.of(
-                        new ProductDisplayResponse(1L, "에티오피아 예가체프 G1", 15000),
-                        new ProductDisplayResponse(2L, "과테말라 안티구아", 14000)
+                        new ProductResponse(1L, "에티오피아 예가체프 G1", 15000),
+                        new ProductResponse(2L, "과테말라 안티구아", 14000)
                 ),
                 0,
                 4,
@@ -77,9 +77,9 @@ public class ProductDisplayControllerTest {
         // given
         String keyword = "에티오피아";
 
-        PageResponse<ProductDisplayResponse> mockPageResponse = new PageResponse<>(
+        PageResponse<ProductResponse> mockPageResponse = new PageResponse<>(
                 List.of(
-                        new ProductDisplayResponse(1L, "에티오피아 예가체프 G1", 15000)
+                        new ProductResponse(1L, "에티오피아 예가체프 G1", 15000)
                 ),
                 0,
                 4,
@@ -109,10 +109,10 @@ public class ProductDisplayControllerTest {
     @DisplayName("페이징 조건으로 상품 목록을 조회한다")
     void getProducts_withPaging() throws Exception {
         // given
-        PageResponse<ProductDisplayResponse> mockPageResponse = new PageResponse<>(
+        PageResponse<ProductResponse> mockPageResponse = new PageResponse<>(
                 List.of(
-                        new ProductDisplayResponse(5L, "케냐 AA", 16000),
-                        new ProductDisplayResponse(6L, "콜롬비아 수프리모", 15500)
+                        new ProductResponse(5L, "케냐 AA", 16000),
+                        new ProductResponse(6L, "콜롬비아 수프리모", 15500)
                 ),
                 1,
                 2,
@@ -148,10 +148,10 @@ public class ProductDisplayControllerTest {
     @DisplayName("가격 오름차순으로 상품 목록을 조회한다")
     void getProducts_withPriceAscSort() throws Exception {
         // given
-        PageResponse<ProductDisplayResponse> mockPageResponse = new PageResponse<>(
+        PageResponse<ProductResponse> mockPageResponse = new PageResponse<>(
                 List.of(
-                        new ProductDisplayResponse(2L, "과테말라 안티구아", 14000),
-                        new ProductDisplayResponse(1L, "에티오피아 예가체프 G1", 15000)
+                        new ProductResponse(2L, "과테말라 안티구아", 14000),
+                        new ProductResponse(1L, "에티오피아 예가체프 G1", 15000)
                 ),
                 0,
                 4,
@@ -182,10 +182,10 @@ public class ProductDisplayControllerTest {
     @DisplayName("가격 내림차순으로 상품 목록을 조회한다")
     void getProducts_withPriceDescSort() throws Exception {
         // given
-        PageResponse<ProductDisplayResponse> mockPageResponse = new PageResponse<>(
+        PageResponse<ProductResponse> mockPageResponse = new PageResponse<>(
                 List.of(
-                        new ProductDisplayResponse(1L, "에티오피아 예가체프 G1", 15000),
-                        new ProductDisplayResponse(2L, "과테말라 안티구아", 14000)
+                        new ProductResponse(1L, "에티오피아 예가체프 G1", 15000),
+                        new ProductResponse(2L, "과테말라 안티구아", 14000)
                 ),
                 0,
                 4,

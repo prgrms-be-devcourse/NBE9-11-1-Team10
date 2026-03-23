@@ -1,8 +1,8 @@
 package com.gridsandcircles.gc_coffee.product.controller.display;
 
 import com.gridsandcircles.gc_coffee.global.dto.ApiResponse;
-import com.gridsandcircles.gc_coffee.product.dto.display.PageResponse;
-import com.gridsandcircles.gc_coffee.product.dto.display.ProductDisplayResponse;
+import com.gridsandcircles.gc_coffee.product.dto.PageResponse;
+import com.gridsandcircles.gc_coffee.product.dto.ProductResponse;
 import com.gridsandcircles.gc_coffee.product.service.display.ProductDisplayService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -20,7 +20,7 @@ public class ProductDisplayController {
     private final ProductDisplayService productDisplayService;
 
     @GetMapping
-    public ApiResponse<PageResponse<ProductDisplayResponse>> getProducts(
+    public ApiResponse<PageResponse<ProductResponse>> getProducts(
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "4") int size,

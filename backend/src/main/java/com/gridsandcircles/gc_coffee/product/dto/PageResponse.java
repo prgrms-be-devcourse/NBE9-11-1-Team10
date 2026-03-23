@@ -1,4 +1,4 @@
-package com.gridsandcircles.gc_coffee.product.dto.display;
+package com.gridsandcircles.gc_coffee.product.dto;
 
 import org.springframework.data.domain.Page;
 

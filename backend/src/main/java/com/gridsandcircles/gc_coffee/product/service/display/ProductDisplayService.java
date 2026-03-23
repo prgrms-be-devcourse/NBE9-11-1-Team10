@@ -1,8 +1,8 @@
 package com.gridsandcircles.gc_coffee.product.service.display;
 
 import com.gridsandcircles.gc_coffee.entity.Product;
-import com.gridsandcircles.gc_coffee.product.dto.display.PageResponse;
-import com.gridsandcircles.gc_coffee.product.dto.display.ProductDisplayResponse;
+import com.gridsandcircles.gc_coffee.product.dto.PageResponse;
+import com.gridsandcircles.gc_coffee.product.dto.ProductResponse;
 import com.gridsandcircles.gc_coffee.product.repository.ProductRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 public class ProductDisplayService {
     private final ProductRepository productRepository;
 
-    public PageResponse<ProductDisplayResponse> findProducts(String keyword, Pageable pageable) {
+    public PageResponse<ProductResponse> findProducts(String keyword, Pageable pageable) {
         Page<Product> productPage;
 
         if (keyword == null || keyword.isBlank()) {
@@ -25,7 +25,7 @@ public class ProductDisplayService {
             productPage = productRepository.findByNameContainingIgnoreCase(keyword, pageable);
         }
 
-        Page<ProductDisplayResponse> responsePage = productPage.map(ProductDisplayResponse::from);
+        Page<ProductResponse> responsePage = productPage.map(ProductResponse::from);
 
         return PageResponse.from(responsePage);
     }

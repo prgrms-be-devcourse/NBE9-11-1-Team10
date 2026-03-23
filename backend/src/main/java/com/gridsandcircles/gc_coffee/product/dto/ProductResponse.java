@@ -1,14 +1,14 @@
-package com.gridsandcircles.gc_coffee.product.dto.display;
+package com.gridsandcircles.gc_coffee.product.dto;
 
 import com.gridsandcircles.gc_coffee.entity.Product;
 
-public record ProductDisplayResponse(
+public record ProductResponse(
         Long id,
         String name,
         int price
 ) {
-    public static ProductDisplayResponse from(Product product) {
-        return new ProductDisplayResponse(
+    public static ProductResponse from(Product product) {
+        return new ProductResponse(
                 product.getId(),
                 product.getName(),
                 product.getPrice()

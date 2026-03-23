@@ -32,5 +32,22 @@ public class StockService {
         return new StockResponseDto(product.getId(),product.getStock());
     }
 
+    //재고 검증 및 감소 로직
+    public void decreaseStock(Long productId, int quantity) {
+        //해당 상품이 있는지 확인합니다.
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
+       //재고를 줄이고 테이블의 총 재고 개수를 최신화한다.
+        product.removeStock(quantity);
 
+    }
+
+    //재고 검증 및 증가 로직
+    public void increaseStock(Long productId, int quantity) {
+        //해당 상품이 있는지 확인합니다.
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
+        //들어온 quantity만큼 총 재고를 늘린다.
+        product.addStock(quantity);
+    }
 }

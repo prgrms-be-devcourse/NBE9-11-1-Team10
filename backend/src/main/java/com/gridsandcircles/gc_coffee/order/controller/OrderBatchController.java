@@ -1,6 +1,7 @@
 package com.gridsandcircles.gc_coffee.order.controller;
 
 import com.gridsandcircles.gc_coffee.entity.OrderBatch;
+import com.gridsandcircles.gc_coffee.global.dto.ApiResponse;
 import com.gridsandcircles.gc_coffee.order.dto.OrderBatchRequest;
 import com.gridsandcircles.gc_coffee.order.dto.OrderBatchResponse;
 import com.gridsandcircles.gc_coffee.order.service.OrderBatchService;
@@ -18,9 +19,9 @@ public class OrderBatchController {
     private final OrderBatchService orderBatchService;
 
     @PostMapping
-    public OrderBatchResponse write(@RequestBody OrderBatchRequest req){
+    public ApiResponse<OrderBatchResponse> write(@RequestBody OrderBatchRequest req){
         OrderBatch saved = orderBatchService.write(req);
-        return new OrderBatchResponse(saved);
+        return ApiResponse.ok(new OrderBatchResponse(saved));
     }
 
     @GetMapping

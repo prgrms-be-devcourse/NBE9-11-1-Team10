@@ -14,7 +14,7 @@ public class StockController {
     private final StockService stockService;
 
     //api/v1/product/{productId}/stock?requestQuantity=재고수량
-    @GetMapping("api/v1/product/{productId}/stock")
+    @GetMapping("api/v1/products/{productId}/stock")
     public ResponseEntity<ApiResponse<Void>> checkStock(
             @PathVariable("productId") Long productId,
             @RequestParam(required = false,defaultValue = "0") int requestQuantity

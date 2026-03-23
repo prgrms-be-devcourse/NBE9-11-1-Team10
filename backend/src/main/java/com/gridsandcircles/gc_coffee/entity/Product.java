@@ -32,6 +32,12 @@ public class Product {
         this.stock = stock;
     }
 
+    public void update(String name, int price, int stock){
+        this.name = name;
+        this.price = price;
+        this.stock = stock;
+    }
+
     // 재고 감소 로직
     public void removeStock(int quantity) {
         //전체 재고-들어온 수량

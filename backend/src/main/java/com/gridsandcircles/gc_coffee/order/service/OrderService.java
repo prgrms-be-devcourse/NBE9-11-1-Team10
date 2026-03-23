@@ -2,6 +2,7 @@ package com.gridsandcircles.gc_coffee.order.service;
 
 import com.gridsandcircles.gc_coffee.entity.*;
 import com.gridsandcircles.gc_coffee.order.dto.OrderCreateRequest;
+import com.gridsandcircles.gc_coffee.order.dto.OrderDetailResponse;
 import com.gridsandcircles.gc_coffee.order.repository.OrderRepository;
 import com.gridsandcircles.gc_coffee.order.repository.OrderBatchRepository;
 import com.gridsandcircles.gc_coffee.product.repository.ProductRepository;
@@ -70,5 +71,31 @@ public class OrderService {
         }
 
         return orderRepository.save(order).getId();
+    }
+
+    @Transactional(readOnly = true)
+    public OrderDetailResponse getOrderDetails(Long orderId) {
+        Order order = orderRepository.findByIdWithDetails(orderId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
+
+        List<OrderDetailResponse.OrderItemDetail> itemDetails = order.getOrderItems().stream()
+                .map(item -> new OrderDetailResponse.OrderItemDetail(
+                        item.getProduct().getId(),
+                        item.getProduct().getName(),
+                        item.getQuantity(),
+                        item.getProduct().getPrice() // OrderItem에 unitPrice가 없으므로 Product에서 가져옴
+                ))
+                .toList();
+
+        return new OrderDetailResponse(
+                order.getId(),
+                order.getMember().getEmail(), // Order에서 Member를 거쳐 Email 조회
+                order.getAddress(),
+                order.getZipCode(),
+                order.getTotalPrice(),
+                order.getTotalQuantity(),
+                order.getOrderedAt(),
+                itemDetails
+        );
     }
 }

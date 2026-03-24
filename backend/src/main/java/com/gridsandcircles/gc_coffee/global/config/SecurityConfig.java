@@ -38,6 +38,7 @@ public class SecurityConfig {
                 // 요청 권한 설정
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/products/**").permitAll() // 상품 조회는 누구나 가능
+                        .requestMatchers("/api/v1/members/login").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasAuthority("ADMIN") // 관리자 API는 ADMIN만 가능
                         .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 )

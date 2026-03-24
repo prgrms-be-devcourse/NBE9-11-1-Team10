@@ -37,7 +37,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   //페이지 로드 시 딱 한 번 실행 , 백엔드 상품 목록 조회 api 호출
   useEffect(() => {
-    customFetch(`/api/v1/products`)
+    customFetch(`/api/v1/products?size=100`)
       .then(res => {
         if (!res.ok) throw new Error("상품 목록 로드 실패");
         return res.json();

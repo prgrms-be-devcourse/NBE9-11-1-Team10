@@ -63,7 +63,7 @@ export default function AdminProductsPage() {
   }
 
   const handleEditModal = (product: Product) => {
-    const targetId = product.id || (product as any).id;
+    const targetId = (product as any).productId || product.id;
     setEditingId(targetId);
     setNewProduct({
       name: product.name,

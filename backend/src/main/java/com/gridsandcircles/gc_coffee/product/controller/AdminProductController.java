@@ -7,7 +7,6 @@ import com.gridsandcircles.gc_coffee.product.dto.ProductCreateRequest;
 import com.gridsandcircles.gc_coffee.product.dto.ProductCreateResponse;
 import com.gridsandcircles.gc_coffee.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,19 +23,18 @@ public class AdminProductController {
     }
 
     @PutMapping("/{productId}")
-    public ResponseEntity<AdminProductUpdateResponse> updateProduct(
+    public ApiResponse<AdminProductUpdateResponse> updateProduct(
             @PathVariable Long productId,
             @RequestBody AdminProductUpdateRequest request) {
 
         AdminProductUpdateResponse response = productService.updateProduct(productId, request);
-        return ResponseEntity.ok(response);
+        return ApiResponse.ok(response);
     }
 
     @DeleteMapping("/{productId}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
+    public ApiResponse<Void> deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
 
-        // 삭제 성공 시 응답 바디 없이 204 No Content 반환
-        return ResponseEntity.noContent().build();
+        return ApiResponse.ok();
     }
 }

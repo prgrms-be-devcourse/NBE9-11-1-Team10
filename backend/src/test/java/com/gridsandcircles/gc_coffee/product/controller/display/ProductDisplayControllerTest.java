@@ -1,8 +1,9 @@
 package com.gridsandcircles.gc_coffee.product.controller.display;
 
+import com.gridsandcircles.gc_coffee.product.controller.ProductDisplayController;
 import com.gridsandcircles.gc_coffee.product.dto.PageResponse;
 import com.gridsandcircles.gc_coffee.product.dto.ProductResponse;
-import com.gridsandcircles.gc_coffee.product.service.display.ProductDisplayService;
+import com.gridsandcircles.gc_coffee.product.service.ProductDisplayService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

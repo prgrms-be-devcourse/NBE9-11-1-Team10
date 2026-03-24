@@ -8,12 +8,29 @@ export default function ProductList() {
   const { products, updateQuantity } = useCart();
 
   const [keyword, setKeyword] = useState("");
+  const [sortType, setSortType] = useState("latest");
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) =>
       product.name.includes(keyword.trim())
     );
   }, [products, keyword]);
+
+  const sortedProducts = useMemo(() => {
+    const copied = [...filteredProducts];
+
+    switch (sortType) {
+      case "nameAsc":
+        return copied.sort((a, b) => a.name.localeCompare(b.name));
+      case "priceAsc":
+        return copied.sort((a, b) => a.price - b.price);
+      case "priceDesc":
+        return copied.sort((a, b) => b.price - a.price);
+      case "latest":
+      default:
+        return copied;
+    }
+  }, [filteredProducts, sortType]);
 
   return (
     <section>
@@ -36,15 +53,60 @@ export default function ProductList() {
         </button>
       </div>
 
+      {/* 정렬 버튼 */}
+      <div className="mb-6 flex gap-2 flex-wrap">
+        <button
+          type="button"
+          onClick={() => setSortType("latest")}
+          className={`border rounded-lg px-3 py-2 ${sortType === "latest"
+            ? "bg-[#E9E1D1] border-[#C9BDA7]"
+            : "border-[#D1CABF]"
+            }`}
+        >
+          최신순
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setSortType("nameAsc")}
+          className={`border rounded-lg px-3 py-2 ${sortType === "nameAsc"
+            ? "bg-[#E9E1D1] border-[#C9BDA7]"
+            : "border-[#D1CABF]"
+            }`}
+        >
+          이름순
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setSortType("priceAsc")}
+          className={`border rounded-lg px-3 py-2 ${sortType === "priceAsc"
+            ? "bg-[#E9E1D1] border-[#C9BDA7]"
+            : "border-[#D1CABF]"
+            }`}
+        >
+          낮은 가격순
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setSortType("priceDesc")}
+          className={`border rounded-lg px-3 py-2 ${sortType === "priceDesc"
+            ? "bg-[#E9E1D1] border-[#C9BDA7]"
+            : "border-[#D1CABF]"
+            }`}
+        >
+          높은 가격순
+        </button>
+      </div>
+
       {/* 상태 메시지 처리 */}
-      {products.length === 0 && (<p>등록된 상품이 없습니다.</p>)}
-      {products.length > 0 && filteredProducts.length === 0 && (
-        <p>검색 결과가 없습니다.</p>
-      )}
+      {products.length === 0 && <p>등록된 상품이 없습니다.</p>}
+      {products.length > 0 && filteredProducts.length === 0 && <p>검색 결과가 없습니다.</p>}
 
       {/* 상품 그리드 영역 */}
       <div className="grid grid-cols-2 gap-x-6 gap-y-8">
-        {filteredProducts.map((product) => (
+        {sortedProducts.map((product) => (
           <article
             key={product.id}
             className="bg-white border border-[#E9E1D1] rounded-xl overflow-hidden shadow-sm flex flex-col"

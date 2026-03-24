@@ -5,6 +5,7 @@ import com.gridsandcircles.gc_coffee.global.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -37,6 +38,7 @@ public class SecurityConfig {
 
                 // 요청 권한 설정
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/v1/products/**").permitAll() // 상품 조회는 누구나 가능
                         .requestMatchers("/api/v1/members/login").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasAuthority("ADMIN") // 관리자 API는 ADMIN만 가능

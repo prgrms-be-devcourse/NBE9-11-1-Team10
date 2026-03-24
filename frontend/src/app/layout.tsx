@@ -1,5 +1,7 @@
 import "./globals.css";
 import { CartProvider } from "./context/CartContext";
+import { Toaster } from 'sonner';
+
 export default function RootLayout({
   children,
 }: {
@@ -17,6 +19,7 @@ export default function RootLayout({
         </header>
 
         {children}
+        <Toaster position="top-center" richColors />
         </CartProvider>
       </body>
     </html>

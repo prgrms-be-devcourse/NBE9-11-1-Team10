@@ -54,7 +54,7 @@ export default function OrderForm() {
         const itemsSummary = products
           .filter(p => cart[p.id] > 0)
           .map(p => `${p.name} x${cart[p.id]}:${(p.price * cart[p.id]).toLocaleString()}원`)
-          .join(',');
+          .join('|');
 
         router.push(`/orders/success?totalPrice=${totalAmount}&items=${itemsSummary}`);
       } else {

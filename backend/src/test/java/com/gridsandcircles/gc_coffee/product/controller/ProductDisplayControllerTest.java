@@ -1,6 +1,5 @@
-package com.gridsandcircles.gc_coffee.product.controller.display;
+package com.gridsandcircles.gc_coffee.product.controller;
 
-import com.gridsandcircles.gc_coffee.product.controller.ProductDisplayController;
 import com.gridsandcircles.gc_coffee.product.dto.PageResponse;
 import com.gridsandcircles.gc_coffee.product.dto.ProductResponse;
 import com.gridsandcircles.gc_coffee.product.service.ProductDisplayService;

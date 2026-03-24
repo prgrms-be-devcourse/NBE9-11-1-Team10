@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+// 커스텀 fetch 사용
+import { customFetch } from '@/app/api/customFetch';
 
 type ApiResponse<T> = {
   success: boolean;
@@ -76,7 +78,8 @@ export default function AdminOrdersPage() {
         setIsLoading(true);
         setError(null);
 
-        const response = await fetch('http://localhost:8080/api/v1/admin/orders', {
+        // 커스텀 fetch 사용
+        const response = await customFetch('/api/v1/admin/orders', {
           method: 'GET',
           cache: 'no-store',
         });
@@ -97,8 +100,8 @@ export default function AdminOrdersPage() {
             const rawList = Array.isArray(apiResult.data)
               ? apiResult.data
               : Array.isArray(apiResult.data?.content)
-              ? apiResult.data.content
-              : [];
+                ? apiResult.data.content
+                : [];
 
             setOrders(rawList.map(normalizeOrder));
           } else {

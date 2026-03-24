@@ -3,13 +3,15 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 // 1. 경로 수정: components 폴더에서 context 폴더로 접근
-import { useCart } from '../context/CartContext'; 
+import { useCart } from '../context/CartContext';
+// 커스텀 fetch 사용
+import { customFetch } from "../api/customFetch";
 
 export default function OrderForm() {
   const router = useRouter();
   // 2. CartContext에서 필요한 데이터와 함수를 가져옵니다.
   const { cart, products, totalAmount, resetCart } = useCart();
-  
+
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
   const [zipCode, setZipCode] = useState('');
@@ -21,7 +23,7 @@ export default function OrderForm() {
     if (!email.trim()) return alert("이메일을 입력해주세요.");
     if (!address.trim()) return alert("주소를 입력해주세요.");
     if (!zipCode.trim()) return alert("우편번호를 입력해주세요.");
-    
+
     // 장바구니가 비어있는지 확인
     if (Object.keys(cart).length === 0) return alert("장바구니에 상품을 담아주세요.");
 
@@ -38,7 +40,7 @@ export default function OrderForm() {
         }))
       };
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/orders`, {
+      const response = await customFetch(`/api/v1/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData),
@@ -48,8 +50,8 @@ export default function OrderForm() {
 
       if (result.success) {
         // 4. 성공 시 장바구니 리셋 후 이동
-        resetCart(); 
-        
+        resetCart();
+
         // 실제 상품 정보를 성공 페이지에 전달하기 위해 데이터 구성
         const itemsSummary = products
           .filter(p => cart[p.id] > 0)
@@ -68,7 +70,7 @@ export default function OrderForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <h3 className="text-lg font-bold mb-4">주문 정보</h3>
-      
+
       {/* 이메일 입력 */}
       <div className="space-y-2">
         <label className="text-sm font-medium text-gray-700">이메일</label>

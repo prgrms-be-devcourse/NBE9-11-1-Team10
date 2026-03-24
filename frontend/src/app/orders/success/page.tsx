@@ -9,11 +9,9 @@ export default function OrderSuccessPage() {
   // URL 파라미터에서 데이터 추출
   const totalPrice = searchParams.get('totalPrice') || '0';
   
-  // 주문 상품 목록 파싱
+  // 주문 상품 목록 파싱 (데이터가 없으면 빈 배열로 초기화)
   const itemsParam = searchParams.get('items'); 
-  const orderItems = itemsParam 
-    ? itemsParam.split('|') 
-    : ['에티오피아 예가체프 x3:45,000원', '콜롬비아 수프리모 x1:13,000원'];
+  const orderItems = itemsParam ? itemsParam.split('|') : [];
 
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-65px)] bg-black/10 p-6 font-sans">
@@ -33,26 +31,27 @@ export default function OrderSuccessPage() {
 
           <hr className="w-full border-gray-100 mb-6" />
 
-          {/* 4. 상품별 목록 (핵심 수정 영역) */}
+          {/* 4. 상품별 목록 (내역 없음 처리 추가) */}
           <div className="w-full space-y-4 mb-6">
-            {orderItems.map((item, index) => {
-              const [label, price] = item.includes(':') ? item.split(':') : [item, ''];
-              return (
-                <div key={index} className="flex justify-between items-start gap-4 text-sm">
-                  {/* 상품명 영역: flex-grow로 남은 공간을 채우고 leading-relaxed로 가독성 확보 */}
-                  <span className="text-gray-700 leading-relaxed">{label}</span>
-                  
-                  {/* 금액 영역: 
-                      - whitespace-nowrap: 절대 줄바꿈 방지 (45,000원 한 줄 유지)
-                      - flex-shrink-0: 상품명이 길어져도 금액 영역이 찌그러지지 않음
-                      - font-bold: 영수증 느낌을 위해 굵게 처리
-                  */}
-                  <span className="text-gray-900 font-bold whitespace-nowrap flex-shrink-0">
-                    {price}
-                  </span>
-                </div>
-              );
-            })}
+            {orderItems.length === 0 ? (
+              // URL에 상품 정보가 없을 경우 보여줄 Fallback UI
+              <div className="py-4 text-center">
+                <p className="text-sm text-gray-400">주문 내역을 불러올 수 없습니다.</p>
+              </div>
+            ) : (
+              // 정상적으로 상품 정보가 있을 경우 렌더링
+              orderItems.map((item, index) => {
+                const [label, price] = item.includes(':') ? item.split(':') : [item, ''];
+                return (
+                  <div key={index} className="flex justify-between items-start gap-4 text-sm">
+                    <span className="text-gray-700 leading-relaxed">{label}</span>
+                    <span className="text-gray-900 font-bold whitespace-nowrap flex-shrink-0">
+                      {price}
+                    </span>
+                  </div>
+                );
+              })
+            )}
           </div>
 
           <hr className="w-full border-gray-100 mb-6" />
@@ -60,7 +59,6 @@ export default function OrderSuccessPage() {
           {/* 6. 총 합계 */}
           <div className="w-full flex justify-between items-center mb-10">
             <span className="text-base font-bold text-gray-900">총 합계</span>
-            {/* 총 합계도 줄바꿈 방지 적용 */}
             <span className="text-lg font-bold text-gray-900 whitespace-nowrap">
               {Number(totalPrice.replace(/[^0-9]/g, '')).toLocaleString()}원
             </span>

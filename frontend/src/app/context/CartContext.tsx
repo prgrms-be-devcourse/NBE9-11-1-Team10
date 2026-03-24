@@ -4,6 +4,7 @@ import { Product } from "../type/product";
 
 interface CartContextType {
     cart: { [key: number]: number };
+    products: Product[];
     updateQuantity: (id: number, delta: number) => Promise<void>;
     totalAmount: number;
     resetCart: () => void;
@@ -97,7 +98,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     };
 
     return (
-        <CartContext.Provider value={{ cart, updateQuantity, totalAmount, resetCart }}>
+        <CartContext.Provider value={{ cart, products, updateQuantity, totalAmount, resetCart }}>
           {children}
         </CartContext.Provider>
       );

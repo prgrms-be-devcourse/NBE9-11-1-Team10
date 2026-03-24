@@ -15,7 +15,7 @@ export default function LoginPage() {
         setErrorMsg('');
 
         try {
-            const response = await customFetch('/api/members/login', {
+            const response = await customFetch('/api/v1/members/login', {
                 method: 'POST',
                 body: JSON.stringify({ email, password }),
             });
@@ -24,12 +24,14 @@ export default function LoginPage() {
                 throw new Error('로그인 실패');
             }
 
-            const data = await response.json();
-            const { accessToken } = data;
+            const result = await response.json();
+
+            const { accessToken } = result.data;
 
             localStorage.setItem('accessToken', accessToken);
             alert('로그인에 성공했습니다!');
-            router.push('/admin');
+
+            window.location.href = '/admin';
 
         } catch (error: any) {
             console.error('Login failed:', error);

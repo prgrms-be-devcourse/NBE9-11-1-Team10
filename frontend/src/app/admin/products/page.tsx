@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Product, ApiResponse } from '@/app/type/product';
+import { customFetch } from '@/app/api/customFetch';
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -19,7 +20,7 @@ export default function AdminProductsPage() {
       setIsLoading(true);
       const timestamp = new Date().getTime();
       // size=100으로 백엔드의 4개 제한을 우회하고, t파라미터로 캐시 방지
-      const response = await fetch(`http://localhost:8080/api/v1/products?size=100&t=${timestamp}`, {
+      const response = await customFetch(`/api/v1/products?size=100&t=${timestamp}`, {
         cache: 'no-store',
       });
 
@@ -85,12 +86,12 @@ export default function AdminProductsPage() {
       return;
     }
     const url = editingId
-      ? `http://localhost:8080/api/v1/admin/products/${editingId}`
-      : `http://localhost:8080/api/v1/admin/products`;
+      ? `/api/v1/admin/products/${editingId}`
+      : `/api/v1/admin/products`;
     const method = editingId ? 'PUT' : 'POST';
 
     try {
-      const response = await fetch(url, {
+      const response = await customFetch(url, {
         method: method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -120,7 +121,7 @@ export default function AdminProductsPage() {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/v1/admin/products/${id}`, {
+      const response = await customFetch(`/api/v1/admin/products/${id}`, {
         method: 'DELETE',
       });
 

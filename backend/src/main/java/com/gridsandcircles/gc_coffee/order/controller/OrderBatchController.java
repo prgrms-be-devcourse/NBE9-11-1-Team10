@@ -36,7 +36,7 @@ public class OrderBatchController {
         return ApiResponse.ok(orderBatchResponseList);
     }
 
-    @GetMapping("{orderBatchId}")
+    @GetMapping("/{orderBatchId}")
     public ApiResponse<OrderBatchResponse> detail(@PathVariable Long orderBatchId) {
         OrderBatch orderBatch = orderBatchService.findById(orderBatchId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_BATCH_NOT_FOUND));
@@ -50,7 +50,7 @@ public class OrderBatchController {
         return ApiResponse.ok(new OrderBatchResponse(batch));
     }
 
-    @DeleteMapping("{orderBatchId}")
+    @DeleteMapping("/{orderBatchId}")
     public ApiResponse<Void> delete(@PathVariable long orderBatchId) {
         orderBatchService.deleteById(orderBatchId);
         return ApiResponse.ok();

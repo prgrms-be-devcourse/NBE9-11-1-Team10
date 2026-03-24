@@ -1,22 +1,21 @@
 package com.gridsandcircles.gc_coffee.order.service;
 
 import com.gridsandcircles.gc_coffee.entity.*;
+import com.gridsandcircles.gc_coffee.global.exception.BusinessException;
+import com.gridsandcircles.gc_coffee.global.exception.ErrorCode;
+import com.gridsandcircles.gc_coffee.member.repository.MemberRepository;
 import com.gridsandcircles.gc_coffee.order.dto.OrderCreateRequest;
 import com.gridsandcircles.gc_coffee.order.dto.OrderDetailResponse;
 import com.gridsandcircles.gc_coffee.order.repository.OrderRepository;
-import com.gridsandcircles.gc_coffee.order.repository.OrderBatchRepository;
 import com.gridsandcircles.gc_coffee.product.repository.ProductRepository;
-//import com.gridsandcircles.gc_coffee.member.repository.MemberRepository;
-import com.gridsandcircles.gc_coffee.global.exception.BusinessException;
-import com.gridsandcircles.gc_coffee.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,13 +25,18 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final OrderBatchService orderBatchService;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public Long createOrder(OrderCreateRequest req) {
-        // 1. 주문 시점 확정
+
+        // 1. 회원 조회 또는 생성
+        Member member = memberRepository.findByEmail(req.email())
+                .orElseGet(() -> memberRepository.save(new Member(req.email())));
+        // 2. 주문 시점 확정
         LocalDateTime orderedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
 
-        // 2. 배송 배치 자동 결정
+        // 3. 배송 배치 자동 결정
         // 임시 Order 객체를 만들어 BatchService에 넘겨 배치를 결정
         Order tempOrder = Order.builder().orderedAt(orderedAt).build();
         OrderBatch orderBatch = orderBatchService.findOrCreateByOrder(tempOrder);
@@ -41,7 +45,7 @@ public class OrderService {
         int totalQuantity = 0;
         List<OrderItem> orderItems = new ArrayList<>();
 
-        // 3. 주문 상세 항목 생성 및 재고 차감
+        // 4. 주문 상세 항목 생성 및 재고 차감
         for (OrderCreateRequest.OrderItemReq itemReq : req.orderItems()) {
             Product product = productRepository.findById(itemReq.productId())
                     .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
@@ -57,8 +61,9 @@ public class OrderService {
             totalQuantity += itemReq.quantity();
         }
 
-        // 4. 최종 주문 생성
+        // 5. 최종 주문 생성
         Order order = Order.builder()
+                .member(member)
                 .orderBatch(orderBatch) // 자동으로 찾은 배치 주입
                 .address(req.address())
                 .zipCode(req.zipCode())
@@ -68,7 +73,7 @@ public class OrderService {
                 .orderItems(new ArrayList<>())
                 .build();
 
-        // 5. 양방향 관계 설정
+        // 6. 양방향 관계 설정
         for (OrderItem item : orderItems) {
             item.assignOrder(order);
             order.getOrderItems().add(item);

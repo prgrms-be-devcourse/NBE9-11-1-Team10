@@ -1,6 +1,7 @@
 "use client";
 import React, { createContext, useContext, useState, useMemo, useEffect } from "react";
 import { Product } from "../type/product";
+import { toast } from "sonner";
 
 interface CartContextType {
     cart: { [key: number]: number };
@@ -86,14 +87,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             //백엔드 재고 조회 api 호출 결과가 실패하면 재고가 부족하다는 메시지를 보여줌
             if (!response.ok) {
                 const result = await response.json();
-                alert(result.error.message || "재고가 부족합니다.");
+                toast.error(result.error.message || "재고가 부족합니다.");
                 return;
             }
 
             //백엔드 재고 조회 api 호출 결과가 성공하면 장바구니에 상품을 추가
             setCart((prev) => ({ ...prev, [productId]: targetQty }));
         } catch (e) {
-            alert("서버와 통신 중 오류가 발생했습니다.");
+            toast.error("서버와 통신 중 오류가 발생했습니다.");
         }
     };
 

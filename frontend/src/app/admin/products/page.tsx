@@ -4,28 +4,28 @@ import { useEffect, useState } from 'react';
 import { Product, ApiResponse } from '@/app/type/product';
 
 export default function AdminProductsPage() {
-  // 목록 조회용 
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 모달 및 폼 입력용 
+  // 모달 및 새 상품 입력 상태
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newProduct, setNewProduct] = useState({ name: '', price: '', stock: '' });
 
-  // 상품 목록 불러오기
+  // 상품 목록 불러오기 
   const fetchProducts = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('http://localhost:8080/api/v1/products', {
-        cache: 'no-store'
+      const timestamp = new Date().getTime();
+      // size=100으로 백엔드의 4개 제한을 우회하고, t파라미터로 캐시 방지
+      const response = await fetch(`http://localhost:8080/api/v1/products?size=100&t=${timestamp}`, {
+        cache: 'no-store',
       });
 
       if (!response.ok) throw new Error('서버 응답에 문제가 발생했습니다.');
 
       const result = await response.json();
 
-      // 데이터 로직(일반/페이징 응답 모두 대응)
       let productList = [];
       if (Array.isArray(result)) {
         productList = result;
@@ -44,21 +44,34 @@ export default function AdminProductsPage() {
     }
   };
 
-  // 컴포넌트 마운트 시 최초 1회 실행
   useEffect(() => {
     fetchProducts();
   }, []);
 
-  // 새 상품 등록 (POST)
+  // 모달 닫기 및 폼 초기화
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setNewProduct({ name: '', price: '', stock: '' });
+  };
+
+  // 상품 등록 제출
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // 폼 제출 시 새로고침 방지
+    e.preventDefault();
+
+    const trimmedName = newProduct.name.trim();
+
+    // 유효성 검사: 숫자로만 된 이름 방지
+    if (/^\d+$/.test(trimmedName)) {
+      alert('상품명은 숫자로만 입력할 수 없습니다. 정확한 이름을 입력해주세요.');
+      return;
+    }
 
     try {
       const response = await fetch('http://localhost:8080/api/v1/admin/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: newProduct.name,
+          name: trimmedName,
           price: Number(newProduct.price),
           stock: Number(newProduct.stock)
         }),
@@ -66,9 +79,8 @@ export default function AdminProductsPage() {
 
       if (response.ok) {
         alert('상품이 성공적으로 등록되었습니다!');
-        setIsModalOpen(false);
-        setNewProduct({ name: '', price: '', stock: '' });
-        fetchProducts(); // 목록 최신화
+        handleCloseModal(); // 닫으면서 초기화
+        fetchProducts();    // 목록 최신화
       } else {
         alert('상품 등록에 실패했습니다.');
       }
@@ -78,7 +90,6 @@ export default function AdminProductsPage() {
     }
   };
 
-  // 로딩 중 UI
   if (isLoading && products.length === 0) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -87,15 +98,10 @@ export default function AdminProductsPage() {
     );
   }
 
-  // 에러 UI
-  if (error) {
-    return <div className="bg-red-50 p-6 rounded-xl border border-red-100 text-red-600 font-medium">⚠️ {error}</div>;
-  }
+  if (error) return <div className="bg-red-50 p-6 rounded-xl border border-red-100 text-red-600 font-medium">⚠️ {error}</div>;
 
-  // 메인 UI
   return (
     <div className="space-y-8 relative">
-      {/* 상단 타이틀 및 등록 버튼 */}
       <div className="flex justify-between items-end">
         <div>
           <h2 className="text-3xl font-black text-[#222222]">상품 관리</h2>
@@ -109,7 +115,6 @@ export default function AdminProductsPage() {
         </button>
       </div>
 
-      {/* 실데이터 렌더링 테이블 */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -125,30 +130,32 @@ export default function AdminProductsPage() {
             {products.length === 0 ? (
               <tr><td colSpan={5} className="px-8 py-10 text-center text-gray-400 font-medium">등록된 상품이 없습니다.</td></tr>
             ) : (
-              products.map((product) => (
-                <tr key={product.id || product.id} className="hover:bg-[#ba9470]/5 transition-colors">
-                  <td className="px-8 py-5 whitespace-nowrap text-sm text-gray-500 font-medium">#{product.id || product.id}</td>
-                  <td className="px-8 py-5 whitespace-nowrap text-sm font-bold text-[#222222]">{product.name}</td>
-                  <td className="px-8 py-5 whitespace-nowrap text-sm text-gray-600">{product.price.toLocaleString()}원</td>
-                  <td className="px-8 py-5 whitespace-nowrap">
-                    {product.stock > 0 ? (
-                      <span className="px-3 py-1 text-xs font-bold bg-[#ba9470]/10 text-[#ba9470] rounded-md">재고 있음 ({product.stock})</span>
-                    ) : (
-                      <span className="px-3 py-1 text-xs font-bold bg-gray-100 text-gray-400 rounded-md">품절</span>
-                    )}
-                  </td>
-                  <td className="px-8 py-5 whitespace-nowrap text-sm font-bold space-x-6 text-center">
-                    <button className="text-[#ba9470] hover:text-[#a67c52] transition-colors">수정</button>
-                    <button className="text-gray-300 hover:text-red-500 transition-colors">삭제</button>
-                  </td>
-                </tr>
-              ))
+              products.map((product) => {
+                const pId = product.id || (product as any).id;
+                return (
+                  <tr key={pId} className="hover:bg-[#ba9470]/5 transition-colors">
+                    <td className="px-8 py-5 whitespace-nowrap text-sm text-gray-500 font-medium">#{pId}</td>
+                    <td className="px-8 py-5 whitespace-nowrap text-sm font-bold text-[#222222]">{product.name}</td>
+                    <td className="px-8 py-5 whitespace-nowrap text-sm text-gray-600">{product.price.toLocaleString()}원</td>
+                    <td className="px-8 py-5 whitespace-nowrap">
+                      {product.stock > 0 ? (
+                        <span className="px-3 py-1 text-xs font-bold bg-[#ba9470]/10 text-[#ba9470] rounded-md">재고 있음 ({product.stock})</span>
+                      ) : (
+                        <span className="px-3 py-1 text-xs font-bold bg-gray-100 text-gray-400 rounded-md">품절</span>
+                      )}
+                    </td>
+                    <td className="px-8 py-5 whitespace-nowrap text-sm font-bold space-x-6 text-center">
+                      <button className="text-gray-300 cursor-not-allowed" disabled title="추후 구현 예정">수정</button>
+                      <button className="text-gray-300 cursor-not-allowed" disabled title="추후 구현 예정">삭제</button>
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
       </div>
 
-      {/* 상품 등록 모달 (isModalOpen이 true일 때만 렌더링) */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn">
           <div className="bg-white p-8 rounded-2xl w-[400px] shadow-2xl">
@@ -158,7 +165,7 @@ export default function AdminProductsPage() {
                 <label className="block text-sm font-bold text-gray-700 mb-2">상품명</label>
                 <input
                   type="text" required placeholder="예: 콜롬비아 수프리모"
-                  className="w-full border border-gray-200 rounded-lg p-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#ba9470] focus:border-transparent outline-none transition-all"
+                  className="w-full border border-gray-200 rounded-lg p-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#ba9470] outline-none transition-all"
                   value={newProduct.name}
                   onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
                 />
@@ -168,16 +175,16 @@ export default function AdminProductsPage() {
                   <label className="block text-sm font-bold text-gray-700 mb-2">가격 (원)</label>
                   <input
                     type="number" required placeholder="0" min="0"
-                    className="w-full border border-gray-200 rounded-lg p-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#ba9470] focus:border-transparent outline-none transition-all"
+                    className="w-full border border-gray-200 rounded-lg p-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#ba9470] outline-none transition-all"
                     value={newProduct.price}
                     onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">초기 재고 (개)</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">재고 (개)</label>
                   <input
                     type="number" required placeholder="0" min="0"
-                    className="w-full border border-gray-200 rounded-lg p-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#ba9470] focus:border-transparent outline-none transition-all"
+                    className="w-full border border-gray-200 rounded-lg p-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#ba9470] outline-none transition-all"
                     value={newProduct.stock}
                     onChange={(e) => setNewProduct({ ...newProduct, stock: e.target.value })}
                   />
@@ -186,7 +193,7 @@ export default function AdminProductsPage() {
               <div className="flex space-x-3 pt-4">
                 <button
                   type="button"
-                  onClick={() => setIsModalOpen(false)} // 닫기버튼
+                  onClick={handleCloseModal}
                   className="flex-1 py-3 bg-gray-100 text-gray-600 rounded-lg font-bold hover:bg-gray-200 transition-colors"
                 >
                   취소

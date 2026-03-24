@@ -1,21 +1,50 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import { useCart } from "../context/CartContext";
 
 export default function ProductList() {
   const { products, updateQuantity } = useCart();
 
+  const [keyword, setKeyword] = useState("");
+
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) =>
+      product.name.includes(keyword.trim())
+    );
+  }, [products, keyword]);
+
   return (
     <section>
+      {/* 검색창 영역 */}
+      <div className="mb-6 flex gap-2">
+        <input
+          type="text"
+          placeholder="상품명을 검색하세요"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          className="border border-[#D1CABF] rounded-lg px-3 py-2 w-full"
+        />
+
+        <button
+          type="button"
+          onClick={() => setKeyword("")}
+          className="border border-[#D1CABF] rounded-lg px-3 py-2 whitespace-nowrap"
+        >
+          초기화
+        </button>
+      </div>
+
       {/* 상태 메시지 처리 */}
-      {products.length === 0 && (
-        <p>등록된 상품이 없습니다.</p>
+      {products.length === 0 && (<p>등록된 상품이 없습니다.</p>)}
+      {products.length > 0 && filteredProducts.length === 0 && (
+        <p>검색 결과가 없습니다.</p>
       )}
 
       {/* 상품 그리드 영역 */}
       <div className="grid grid-cols-2 gap-x-6 gap-y-8">
-        {products.map((product) => (
+        {filteredProducts.map((product) => (
           <article
             key={product.id}
             className="bg-white border border-[#E9E1D1] rounded-xl overflow-hidden shadow-sm flex flex-col"

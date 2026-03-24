@@ -18,9 +18,8 @@ export default function AdminProductsPage() {
   const fetchProducts = async () => {
     try {
       setIsLoading(true);
-      const timestamp = new Date().getTime();
       // size=100으로 백엔드의 4개 제한을 우회하고, t파라미터로 캐시 방지
-      const response = await customFetch(`/api/v1/products?size=100&t=${timestamp}`, {
+      const response = await customFetch(`/api/v1/products?size=100`, {
         cache: 'no-store',
       });
 

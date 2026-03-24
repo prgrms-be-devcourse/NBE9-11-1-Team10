@@ -1,4 +1,10 @@
 package com.gridsandcircles.gc_coffee.member.dto;
 
-public class TokenResponse {
+public record TokenResponse(
+        String accessToken,
+        String tokenType
+) {
+    public static TokenResponse of(String accessToken) {
+        return new TokenResponse(accessToken, "Bearer");
+    }
 }

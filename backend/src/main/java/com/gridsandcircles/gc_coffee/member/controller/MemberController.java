@@ -1,8 +1,10 @@
 package com.gridsandcircles.gc_coffee.member.controller;
 
 import com.gridsandcircles.gc_coffee.global.dto.ApiResponse;
+import com.gridsandcircles.gc_coffee.member.dto.LoginRequest;
 import com.gridsandcircles.gc_coffee.member.dto.MemberRequest;
 import com.gridsandcircles.gc_coffee.member.dto.MemberResponse;
+import com.gridsandcircles.gc_coffee.member.dto.TokenResponse;
 import com.gridsandcircles.gc_coffee.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,12 +18,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MemberController {
 
-    private final MemberService memberservice;
+    private final MemberService memberService;
 
     @PostMapping
     public ApiResponse<MemberResponse> createOrFindMember(
             @RequestBody @Valid MemberRequest request){
-        MemberResponse response = memberservice.findOrCreateMember(request);
+        MemberResponse response = memberService.findOrCreateMember(request);
         return ApiResponse.ok(response);
+    }
+
+    @PostMapping("/login")
+    public ApiResponse<TokenResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
+        return ApiResponse.ok(memberService.login(loginRequest));
     }
 }

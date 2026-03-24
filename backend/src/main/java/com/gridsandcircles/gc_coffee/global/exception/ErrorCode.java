@@ -21,7 +21,8 @@ public enum ErrorCode {
     ORDER_BATCH_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER_BATCH_NOT_FOUND", "배송 회차를 찾을 수 없습니다"),
 
     // 고객
-    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_NOT_FOUND", "고객을 찾을 수 없습니다");
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_NOT_FOUND", "고객을 찾을 수 없습니다"),
+    INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "INVALID_PASSWORD", "비밀번호가 일치하지 않습니다");
 
     private final HttpStatus status;
     private final String code;

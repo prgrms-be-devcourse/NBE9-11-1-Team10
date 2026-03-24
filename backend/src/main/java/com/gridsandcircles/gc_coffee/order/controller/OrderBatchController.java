@@ -8,7 +8,6 @@ import com.gridsandcircles.gc_coffee.order.dto.OrderBatchRequest;
 import com.gridsandcircles.gc_coffee.order.dto.OrderBatchResponse;
 import com.gridsandcircles.gc_coffee.order.service.OrderBatchService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,10 +37,10 @@ public class OrderBatchController {
     }
 
     @GetMapping("{orderBatchId}")
-    public OrderBatchResponse detail(@PathVariable Long orderBatchId) {
+    public ApiResponse<OrderBatchResponse> detail(@PathVariable Long orderBatchId) {
         OrderBatch orderBatch = orderBatchService.findById(orderBatchId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_BATCH_NOT_FOUND));
-        return new OrderBatchResponse(orderBatch);
+        return ApiResponse.ok(new OrderBatchResponse(orderBatch));
     }
 
     @GetMapping("/current")
@@ -52,8 +51,8 @@ public class OrderBatchController {
     }
 
     @DeleteMapping("{orderBatchId}")
-    public ResponseEntity<Void> delete(@PathVariable long orderBatchId) {
+    public ApiResponse<Void> delete(@PathVariable long orderBatchId) {
         orderBatchService.deleteById(orderBatchId);
-        return ResponseEntity.noContent().build(); // 삭제 후 204응답
+        return ApiResponse.ok();
     }
 }

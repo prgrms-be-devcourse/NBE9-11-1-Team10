@@ -1,9 +1,9 @@
-package com.gridsandcircles.gc_coffee.product.controller.display;
+package com.gridsandcircles.gc_coffee.product.controller;
 
 import com.gridsandcircles.gc_coffee.global.dto.ApiResponse;
 import com.gridsandcircles.gc_coffee.product.dto.PageResponse;
 import com.gridsandcircles.gc_coffee.product.dto.ProductResponse;
-import com.gridsandcircles.gc_coffee.product.service.display.ProductDisplayService;
+import com.gridsandcircles.gc_coffee.product.service.ProductDisplayService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

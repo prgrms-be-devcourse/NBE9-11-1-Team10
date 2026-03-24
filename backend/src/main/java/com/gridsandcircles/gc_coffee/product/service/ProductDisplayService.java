@@ -1,4 +1,4 @@
-package com.gridsandcircles.gc_coffee.product.service.display;
+package com.gridsandcircles.gc_coffee.product.service;
 
 import com.gridsandcircles.gc_coffee.entity.Product;
 import com.gridsandcircles.gc_coffee.product.dto.PageResponse;

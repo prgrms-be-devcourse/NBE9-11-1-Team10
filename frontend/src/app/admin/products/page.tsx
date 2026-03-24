@@ -21,7 +21,7 @@ export default function AdminProductsPage() {
 
         const result = await response.json();
 
-        // 백엔드가 아예 날것의 배열을 보냈을 경우
+        // 백엔드가 배열을 보냈을 경우
         if (Array.isArray(result)) {
           setProducts(result);
         }
@@ -89,8 +89,12 @@ export default function AdminProductsPage() {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              {['ID', '상품명', '가격', '재고'].map((header) => (
-                <th key={header} className="px-8 py-5 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">
+              {['ID', '상품명', '가격', '재고 상태', '관리'].map((header) => (
+                <th
+                  key={header}
+                  className={`px-8 py-5 text-xs font-bold text-gray-400 uppercase tracking-widest ${header === '관리' ? 'text-center' : 'text-left'
+                    }`}
+                >
                   {header}
                 </th>
               ))}

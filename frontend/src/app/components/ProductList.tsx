@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useCart } from "../context/CartContext";
 
@@ -9,6 +9,8 @@ export default function ProductList() {
 
   const [keyword, setKeyword] = useState("");
   const [sortType, setSortType] = useState("latest");
+  const ITEMS_PER_PAGE = 4;
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) =>
@@ -31,6 +33,18 @@ export default function ProductList() {
         return copied;
     }
   }, [filteredProducts, sortType]);
+
+  const totalPages = Math.ceil(sortedProducts.length / ITEMS_PER_PAGE);
+
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    return sortedProducts.slice(startIndex, endIndex);
+  }, [sortedProducts, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [keyword, sortType]);
 
   return (
     <section>
@@ -106,7 +120,7 @@ export default function ProductList() {
 
       {/* 상품 그리드 영역 */}
       <div className="grid grid-cols-2 gap-x-6 gap-y-8">
-        {sortedProducts.map((product) => (
+        {paginatedProducts.map((product) => (
           <article
             key={product.id}
             className="bg-white border border-[#E9E1D1] rounded-xl overflow-hidden shadow-sm flex flex-col"
@@ -142,10 +156,48 @@ export default function ProductList() {
                   장바구니 담기
                 </button>
               </div>
+
+
             </div>
           </article>
         ))}
       </div>
+      {/* 페이지 버튼 */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-8">
+          <button
+            type="button"
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+            disabled={currentPage === 1}
+            className="border border-[#D1CABF] rounded-lg px-3 py-2 disabled:opacity-40"
+          >
+            이전
+          </button>
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              type="button"
+              onClick={() => setCurrentPage(page)}
+              className={`border rounded-lg px-3 py-2 ${currentPage === page
+                ? "bg-[#E9E1D1] border-[#C9BDA7]"
+                : "border-[#D1CABF]"
+                }`}
+            >
+              {page}
+            </button>
+          ))}
+
+          <button
+            type="button"
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+            disabled={currentPage === totalPages}
+            className="border border-[#D1CABF] rounded-lg px-3 py-2 disabled:opacity-40"
+          >
+            다음
+          </button>
+        </div>
+      )}
     </section>
   );
 }

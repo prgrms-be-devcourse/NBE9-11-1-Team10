@@ -90,6 +90,29 @@ export default function AdminProductsPage() {
     }
   };
 
+  // 상품 삭제
+  const handleDelete = async (id: number) => {
+    if (!window.confirm('정말 상품을 삭제하시겠습니까?')) {
+      return; // 취소 가능
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/v1/admin/products/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        alert('상품이 성공적으로 삭제되었습니다!');
+        fetchProducts();    // 목록 최신화
+      } else {
+        alert('상품 삭제에 실패했습니다.');
+      }
+    } catch (err) {
+      console.error('삭제 에러:', err);
+      alert('서버와 통신 중 에러가 발생했습니다.');
+    }
+  };
+
   if (isLoading && products.length === 0) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -146,7 +169,12 @@ export default function AdminProductsPage() {
                     </td>
                     <td className="px-8 py-5 whitespace-nowrap text-sm font-bold space-x-6 text-center">
                       <button className="text-gray-300 cursor-not-allowed" disabled title="추후 구현 예정">수정</button>
-                      <button className="text-gray-300 cursor-not-allowed" disabled title="추후 구현 예정">삭제</button>
+                      <button
+                        onClick={() => handleDelete(pId as number)}
+                        className="text-gray-400 hover:text-red-500 transition-colors"
+                      >
+                        삭제
+                      </button>
                     </td>
                   </tr>
                 );

@@ -1,5 +1,16 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
+type ApiResponse<T> = {
+  success: boolean;
+  data: T;
+  error?: {
+    code: string;
+    message: string;
+  } | null;
+};
+
 type OrderItem = {
   productId: number;
   productName: string;
@@ -35,60 +46,87 @@ function formatOrderDateParts(orderedAt: string) {
   return { datePart, timePart };
 }
 
+function normalizeOrder(raw: any): Order {
+  return {
+    orderId: raw.orderId ?? raw.id ?? 0,
+    email: raw.email ?? raw.member?.email ?? '',
+    batchDate: raw.batchDate ?? raw.orderBatch?.batchDate ?? '',
+    address: raw.address ?? '',
+    zipCode: raw.zipCode ?? '',
+    totalPrice: raw.totalPrice ?? 0,
+    totalQuantity: raw.totalQuantity ?? 0,
+    orderedAt: raw.orderedAt ?? new Date().toISOString(),
+    orderItems: (raw.orderItems ?? []).map((item: any) => ({
+      productId: item.productId ?? item.product?.id ?? 0,
+      productName: item.productName ?? item.product?.name ?? '',
+      quantity: item.quantity ?? 0,
+      unitPrice: item.unitPrice ?? item.product?.price ?? 0,
+    })),
+  };
+}
+
 export default function AdminOrdersPage() {
-  const dummyOrders: Order[] = [
-    {
-      orderId: 101,
-      email: 'alice@example.com',
-      batchDate: '2026-03-25',
-      address: '서울시 강남구 테헤란로 123',
-      zipCode: '06134',
-      totalPrice: 18500,
-      totalQuantity: 3,
-      orderedAt: '2026-03-24T15:12:30',
-      orderItems: [
-        { productId: 1, productName: '콜롬비아 수프리모 원두', quantity: 2, unitPrice: 4500 },
-        { productId: 3, productName: '에티오피아 예가체프 원두', quantity: 1, unitPrice: 9500 },
-      ],
-    },
-    {
-      orderId: 102,
-      email: 'bob@example.com',
-      batchDate: '2026-03-25',
-      address: '서울시 송파구 올림픽로 77',
-      zipCode: '05551',
-      totalPrice: 12000,
-      totalQuantity: 2,
-      orderedAt: '2026-03-24T16:05:10',
-      orderItems: [{ productId: 2, productName: '에티오피아 예가체프 원두', quantity: 2, unitPrice: 6000 }],
-    },
-    {
-      orderId: 103,
-      email: 'charlie@example.com',
-      batchDate: '2026-03-26',
-      address: '서울시 마포구 월드컵북로 21',
-      zipCode: '03991',
-      totalPrice: 22500,
-      totalQuantity: 4,
-      orderedAt: '2026-03-24T17:20:00',
-      orderItems: [
-        { productId: 4, productName: '콜롬비아 수프리모 원두', quantity: 2, unitPrice: 6000 },
-        { productId: 5, productName: '에티오피아 예가체프 원두', quantity: 1, unitPrice: 4500 },
-        { productId: 6, productName: '인도네시아 만델링 원두', quantity: 1, unitPrice: 6000 },
-      ],
-    },
-    {
-      orderId: 104,
-      email: 'david@example.com',
-      batchDate: '2026-03-26',
-      address: '서울시 성동구 왕십리로 83',
-      zipCode: '04769',
-      totalPrice: 9000,
-      totalQuantity: 2,
-      orderedAt: '2026-03-24T18:00:40',
-      orderItems: [{ productId: 7, productName: '콜롬비아 수프리모 원두', quantity: 2, unitPrice: 4500 }],
-    },
-  ];
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const response = await fetch('http://localhost:8080/api/v1/admin/orders', {
+          method: 'GET',
+          cache: 'no-store',
+        });
+
+        if (!response.ok) {
+          throw new Error('네트워크 응답에 문제가 발생했습니다.');
+        }
+
+        const result = await response.json();
+
+        if (Array.isArray(result)) {
+          const normalized = result.map(normalizeOrder);
+          setOrders(normalized);
+        } else if (result.success !== undefined) {
+          const apiResult = result as ApiResponse<any>;
+
+          if (apiResult.success) {
+            const rawList = Array.isArray(apiResult.data)
+              ? apiResult.data
+              : Array.isArray(apiResult.data?.content)
+              ? apiResult.data.content
+              : [];
+
+            setOrders(rawList.map(normalizeOrder));
+          } else {
+            setError(apiResult.error?.message || '데이터를 불러오는데 실패했습니다.');
+            setOrders([]);
+          }
+        } else {
+          setOrders([]);
+        }
+      } catch (err) {
+        console.error('API 연동 에러:', err);
+        setError('백엔드 서버 연결을 확인해주세요.');
+        setOrders([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-[#ba9470] font-bold animate-pulse">주문 정보를 가져오는 중...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-[calc(110%+32px)] -mx-4 px-2 md:px-3 lg:px-10 space-y-6">
@@ -96,6 +134,7 @@ export default function AdminOrdersPage() {
         <div>
           <h2 className="text-3xl font-black text-gray-900">주문 관리</h2>
           <p className="text-gray-500 mt-1">접수된 주문 내역을 확인하고 관리할 수 있습니다.</p>
+          {error && <p className="text-xs mt-1 text-red-500">API 오류: {error}</p>}
         </div>
       </div>
 
@@ -127,37 +166,45 @@ export default function AdminOrdersPage() {
             </thead>
 
             <tbody className="bg-white divide-y divide-gray-100">
-              {dummyOrders.map((order) => {
-                const { datePart, timePart } = formatOrderDateParts(order.orderedAt);
+              {orders.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="px-5 py-8 text-center text-sm text-gray-500">
+                    주문 내역이 없습니다.
+                  </td>
+                </tr>
+              ) : (
+                orders.map((order) => {
+                  const { datePart, timePart } = formatOrderDateParts(order.orderedAt);
 
-                return (
-                  <tr key={order.orderId} className="hover:bg-indigo-50/30 transition-colors">
-                    <td className="px-5 py-4 text-sm text-gray-500 font-medium align-top break-words">#{order.orderId}</td>
-                    <td className="px-5 py-4 text-sm font-bold text-gray-900 align-top break-words">{order.email}</td>
-                    <td className="px-5 py-4 text-sm text-gray-600 align-top break-words">{order.batchDate}</td>
-                    <td className="px-5 py-4 text-sm text-gray-600 align-top">
-                      <div>{datePart}</div>
-                      <div>{timePart}</div>
-                    </td>
-                    <td className="px-5 py-4 text-sm text-gray-600 align-top break-words">
-                      {order.address} ({order.zipCode})
-                    </td>
-                    <td className="px-5 py-4 text-sm text-gray-600 align-top break-words">{order.totalQuantity}개</td>
-                    <td className="px-5 py-4 text-sm font-semibold text-gray-800 align-top break-words">
-                      {order.totalPrice.toLocaleString()}원
-                    </td>
-                    <td className="px-5 py-4 text-sm text-gray-600 align-top break-words">
-                      <ul className="list-disc pl-5 space-y-1">
-                        {order.orderItems.map((item) => (
-                          <li key={`${order.orderId}-${item.productId}`}>
-                            {item.productName} <span className="font-semibold">x{item.quantity}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </td>
-                  </tr>
-                );
-              })}
+                  return (
+                    <tr key={order.orderId} className="hover:bg-indigo-50/30 transition-colors">
+                      <td className="px-5 py-4 text-sm text-gray-500 font-medium align-top break-words">#{order.orderId}</td>
+                      <td className="px-5 py-4 text-sm font-bold text-gray-900 align-top break-words">{order.email}</td>
+                      <td className="px-5 py-4 text-sm text-gray-600 align-top break-words">{order.batchDate}</td>
+                      <td className="px-5 py-4 text-sm text-gray-600 align-top">
+                        <div>{datePart}</div>
+                        <div>{timePart}</div>
+                      </td>
+                      <td className="px-5 py-4 text-sm text-gray-600 align-top break-words">
+                        {order.address} ({order.zipCode})
+                      </td>
+                      <td className="px-5 py-4 text-sm text-gray-600 align-top break-words">{order.totalQuantity}개</td>
+                      <td className="px-5 py-4 text-sm font-semibold text-gray-800 align-top break-words">
+                        {order.totalPrice.toLocaleString()}원
+                      </td>
+                      <td className="px-5 py-4 text-sm text-gray-600 align-top break-words">
+                        <ul className="list-disc pl-5 space-y-1">
+                          {order.orderItems.map((item) => (
+                            <li key={`${order.orderId}-${item.productId}`}>
+                              {item.productName} <span className="font-semibold">x{item.quantity}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>

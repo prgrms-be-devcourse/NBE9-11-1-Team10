@@ -109,6 +109,6 @@ public class OrderService {
     }
 
     public List<Order> list(){
-        return orderRepository.findAll();
+        return orderRepository.findAllWithDetails();
     }
 }

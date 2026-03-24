@@ -1,13 +1,34 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import React from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
-
+    const router = useRouter();
+    const [isAuthorized, setIsAuthorized] = useState(false);
     const isActive = (href: string) => pathname.startsWith(href);
+
+    useEffect(() => {
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+            alert('관리자 권한이 필요합니다. 먼저 로그인해주세요.');
+            router.replace('/login');
+        } else {
+            setIsAuthorized(true);
+        }
+    }, [router]);
+
+    const handleLogout = () => {
+        localStorage.removeItem('accessToken');
+        alert('로그아웃 되었습니다.');
+        router.push('/login');
+    };
+
+    if (!isAuthorized) {
+        return null;
+    }
 
     return (
         <div className="flex h-screen bg-[#f8f9fa] font-sans">
@@ -57,7 +78,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <h2 className="text-xl font-bold text-[#222222]">
                         {isActive('/admin/products') ? '📦 상품 관리' : '🛒 주문 관리'}
                     </h2>
-                    <button className="text-sm font-bold text-[#ba9470] hover:underline">로그아웃</button>
+                    <button
+                        onClick={handleLogout}
+                        className="text-sm font-bold text-[#ba9470] hover:underline"
+                    >
+                        로그아웃
+                    </button>
                 </header>
                 <div className="flex-1 overflow-y-auto p-10 bg-white">
                     <div className="max-w-6xl mx-auto">{children}</div>

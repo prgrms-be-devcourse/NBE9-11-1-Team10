@@ -10,6 +10,7 @@ export default function AdminProductsPage() {
 
   // 모달 및 새 상품 입력 상태
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [newProduct, setNewProduct] = useState({ name: '', price: '', stock: '' });
 
   // 상품 목록 불러오기 
@@ -51,10 +52,28 @@ export default function AdminProductsPage() {
   // 모달 닫기 및 폼 초기화
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setEditingId(null); // 수정 모드 해제
     setNewProduct({ name: '', price: '', stock: '' });
   };
 
-  // 상품 등록 제출
+  const handleCreateModal = () => {
+    setEditingId(null);
+    setNewProduct({ name: '', price: '', stock: '' });
+    setIsModalOpen(true);
+  }
+
+  const handleEditModal = (product: Product) => {
+    const targetId = product.id || (product as any).id;
+    setEditingId(targetId);
+    setNewProduct({
+      name: product.name,
+      price: String(product.price),
+      stock: String(product.stock)
+    });
+    setIsModalOpen(true);
+  }
+
+  // 상품 등록/수정 제출
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -65,10 +84,14 @@ export default function AdminProductsPage() {
       alert('상품명은 숫자로만 입력할 수 없습니다. 정확한 이름을 입력해주세요.');
       return;
     }
+    const url = editingId
+      ? `http://localhost:8080/api/v1/admin/products/${editingId}`
+      : `http://localhost:8080/api/v1/admin/products`;
+    const method = editingId ? 'PUT' : 'POST';
 
     try {
-      const response = await fetch('http://localhost:8080/api/v1/admin/products', {
-        method: 'POST',
+      const response = await fetch(url, {
+        method: method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: trimmedName,
@@ -78,14 +101,14 @@ export default function AdminProductsPage() {
       });
 
       if (response.ok) {
-        alert('상품이 성공적으로 등록되었습니다!');
+        alert(editingId ? '상품이 성공적으로 수정되었습니다!' : '상품이 성공적으로 등록되었습니다!');
         handleCloseModal(); // 닫으면서 초기화
         fetchProducts();    // 목록 최신화
       } else {
-        alert('상품 등록에 실패했습니다.');
+        alert(editingId ? '상품 수정에 실패했습니다.' : '상품 등록에 실패했습니다.');
       }
     } catch (err) {
-      console.error('등록 에러:', err);
+      console.error('통신 에러:', err);
       alert('서버와 통신 중 에러가 발생했습니다.');
     }
   };
@@ -131,7 +154,7 @@ export default function AdminProductsPage() {
           <p className="text-gray-500 mt-1 font-medium">판매 중인 원두 상품을 실시간으로 관리합니다.</p>
         </div>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={handleCreateModal}
           className="bg-[#ba9470] text-white px-6 py-3 rounded-lg hover:bg-[#a67c52] shadow-md transition-all font-bold"
         >
           + 새 상품 등록
@@ -168,8 +191,12 @@ export default function AdminProductsPage() {
                       )}
                     </td>
                     <td className="px-8 py-5 whitespace-nowrap text-sm font-bold space-x-6 text-center">
-                      <button className="text-gray-300 cursor-not-allowed" disabled title="추후 구현 예정">수정</button>
                       <button
+                        onClick={() => handleEditModal(product)}
+                        className="text-[#ba9470] hover:text-[#a67c52] transition-colors"
+                      >
+                        수정
+                      </button>                      <button
                         onClick={() => handleDelete(pId as number)}
                         className="text-gray-400 hover:text-red-500 transition-colors"
                       >
@@ -187,7 +214,9 @@ export default function AdminProductsPage() {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn">
           <div className="bg-white p-8 rounded-2xl w-[400px] shadow-2xl">
-            <h3 className="text-2xl font-bold text-[#222222] mb-6">새 원두 등록</h3>
+            <h3 className="text-2xl font-bold text-[#222222] mb-6">
+              {editingId ? '상품 수정' : '새 원두 등록'}
+            </h3>
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2">상품명</label>
@@ -230,7 +259,7 @@ export default function AdminProductsPage() {
                   type="submit"
                   className="flex-1 py-3 bg-[#ba9470] text-white rounded-lg font-bold hover:bg-[#a67c52] transition-colors shadow-lg shadow-[#ba9470]/20"
                 >
-                  등록하기
+                  {editingId ? '수정하기' : '등록하기'}
                 </button>
               </div>
             </form>

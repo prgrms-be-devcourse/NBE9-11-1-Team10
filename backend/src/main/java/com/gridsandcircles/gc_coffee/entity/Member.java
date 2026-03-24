@@ -25,6 +25,13 @@ public class Member {
     @Column(nullable = false, length = 20)
     private Role role = Role.USER;
 
+    // 관리자 계정 생성용
+    public Member(String email, String password, Role role) {
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
     public Member(String email) {
         this.email = email;
     }

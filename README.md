@@ -16,13 +16,12 @@
 ## 🛠️ 기술 스택
 
 ### Backend
-![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white) ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white) ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
-
+![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white) ![Spring|137](https://img.shields.io/badge/spring_boot-6DB33F.svg?style=for-the-badge&logo=springboot&logoColor=white) ![Spring Security|132](https://img.shields.io/badge/spring_security-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white) ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
 ### Frontend
-![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white) ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Next JS|78](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white) ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
 ### Database
-![H2](https://img.shields.io/badge/H2-09476B?style=for-the-badge&logo=h2database&logoColor=white) ![Spring Data JPA](https://img.shields.io/badge/Spring%20Data%20JPA-6DB33F?style=for-the-badge&logo=spring&logoColor=white) ![Hibernate](https://img.shields.io/badge/Hibernate-59666C?style=for-the-badge&logo=Hibernate&logoColor=white)
+![H2|62](https://img.shields.io/badge/H2-09476B?style=for-the-badge&logo=h2database&logoColor=white) ![Spring Data JPA](https://img.shields.io/badge/Spring%20Data%20JPA-6DB33F?style=for-the-badge&logo=spring&logoColor=white) ![Hibernate](https://img.shields.io/badge/Hibernate-59666C?style=for-the-badge&logo=Hibernate&logoColor=white)
 
 ### 협업
 ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white) ![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white) ![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white) ![Slack](https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white)
@@ -53,7 +52,7 @@ graph LR
 
 ## 📊 ERD
 
-![ERD](docs/erd.png)
+![ERD](docs/[ERD]10팀_1차 팀프로젝트.png)
 
 ### 테이블 구조
 - **Member**: 고객 정보 (이메일, 권한)
@@ -135,14 +134,14 @@ src/
 
 ## 👥 팀원 역할
 
-| 팀원 | 역할 |
-|------|------|
-| 정준용 (팀장) | 공통 인프라 (ApiResponse, CORS, ExceptionHandler), 프론트 공통 레이아웃, 컴포넌트, 코드 리뷰, 최종 리팩토링 |
-| 이도훈 | 주문 생성 API(장바구니 주문 전환 시 트랜잭션 처리 로직), 주문 상세 조회, 주문서 작성 폼, 주문 결과 페이지 |
-| 황지윤 | 상품 목록 조회 API (페이징, 정렬, 검색), 상품 리스트 그리드 UI, 메인 페이지 UI |
-| 장재원 | 관리자 상품 CRUD, 고객 API, JWT 기반 관리자 로그인, 관리자 페이지 레이아웃, 상품 등록/수정 폼 |
-| 조보강 | 주문 마감 자동화 시스템, 동일 고객/배치 기준 주문 병합 알고리즘, 관리자 주문 내역 테이블 UI |
-| 조우진 | 재고 조회, 확인 API, 재고 차감 요청 기능, 장바구니 전역 상태 관리(React Context), 장바구니 페이지 UI(수량 변경, 삭제, 합계, 재고 초과 체크) |
+| 팀원          | 역할                                                                                             |
+| ----------- | ---------------------------------------------------------------------------------------------- |
+| 정준용<br>(팀장) | 공통 인프라 (ApiResponse, CORS, ExceptionHandler), 프론트 공통 레이아웃, 컴포넌트, 코드 리뷰, 최종 리팩토링                |
+| 이도훈         | 주문 생성 API(장바구니 주문 전환 시 트랜잭션 처리 로직), 주문 상세 조회, 주문서 작성 폼, 주문 결과 페이지                              |
+| 황지윤         | 상품 목록 조회 API (페이징, 정렬, 검색), 상품 리스트 그리드 UI, 메인 페이지 UI                                           |
+| 장재원         | 관리자 상품 CRUD, 고객 API, JWT 기반 관리자 로그인, 관리자 페이지 레이아웃, 상품 등록/수정 폼                                  |
+| 조보강         | 주문 마감 자동화 시스템, 동일 고객/배치 기준 주문 병합 알고리즘, 관리자 주문 내역 테이블 UI                                        |
+| 조우진         | 재고 조회, 확인 API, 재고 차감 요청 기능, 장바구니 전역 상태 관리(React Context), 장바구니 페이지 UI(수량 변경, 삭제, 합계, 재고 초과 체크) |
 
 ## 🔧 실행 방법
 
@@ -161,6 +160,15 @@ npm run dev
 # http://localhost:3000
 ```
 
+### 관리자 페이지 접속 (테스트 계정)
+```text
+서버 실행 시 `InitDb.java`와 `data.sql`을 통해 초기 관리자 계정과 4개의 원두 상품 데이터 자동 생성
+
+- 관리자 페이지 접속: `http://localhost:3000/login`
+- 이메일: `admin@test.com`
+- 비밀번호: `1234`
+```
+
 ## 📝 브랜치 전략
 
 ```mermaid
@@ -168,14 +176,14 @@ gitGraph
     commit id: "init"
     branch dev
     commit id: "공통 세팅"
-    branch feat/#1
+    branch feat/1
     commit id: "기능 개발"
     checkout dev
-    merge feat/#1 id: "PR 머지"
-    branch feat/#2
+    merge feat/1 id: "PR 머지"
+    branch feat/2
     commit id: "기능 개발2"
     checkout dev
-    merge feat/#2 id: "PR 머지2"
+    merge feat/2 id: "PR 머지2"
     checkout main
     merge dev id: "최종 배포"
 ```

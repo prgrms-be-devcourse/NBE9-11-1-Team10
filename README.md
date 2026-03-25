@@ -52,7 +52,7 @@ graph LR
 
 ## 📊 ERD
 
-![ERD](docs/[ERD]10팀_1차 팀프로젝트.png)
+![ERD](docs/erd.png)
 
 ### 테이블 구조
 - **Member**: 고객 정보 (이메일, 권한)

@@ -17,9 +17,16 @@ spring:
     hibernate:
       ddl-auto: create
     show-sql: true
+    defer-datasource-initialization: true
     properties:
       hibernate:
         format_sql: true
 
 server:
   port: 8080
+
+jwt:
+  # 환경변수 JWT_SECRET 읽어오기. 값 없으면 에러남
+  # 기본 값은 32byte 문자열 BASE64 인코딩 한 값
+  secret: ${JWT_SECRET:dGhpcy1pcy1KV1QtU0VDUkVULWZvci1sb2NhbC10ZXN0}
+  token-validity-in-seconds: 86400
